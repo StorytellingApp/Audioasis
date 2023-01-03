@@ -1,20 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/gestures.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'login_widget.dart';
+import 'home_page.dart';
 import 'main.dart';
 import 'auth_page.dart';
+import 'package:flutter/gestures.dart';
 
-class LoginWidget extends StatefulWidget {
+class SignUpWidget extends StatefulWidget {
   final VoidCallback onCLickedSignUp;
-  const LoginWidget({Key? key,
-  required this.onCLickedSignUp}) : super(key: key);
+  const SignUpWidget({Key? key,
+    required this.onCLickedSignUp}) : super(key: key);
 
   @override
-  State<LoginWidget> createState() => _LoginWidgetState();
+  State<SignUpWidget> createState() => _SignUpWidgetState();
 }
 
-class _LoginWidgetState extends State<LoginWidget> {
+class _SignUpWidgetState extends State<SignUpWidget> {
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -38,7 +40,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               controller: userNameController,
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
-                labelText: 'Email'
+                  labelText: 'Email'
               ),
             ),
           ),
@@ -48,30 +50,30 @@ class _LoginWidgetState extends State<LoginWidget> {
               controller: passwordController,
               textInputAction: TextInputAction.done,
               decoration: const InputDecoration(
-                labelText: 'Password'
+                  labelText: 'Password'
               ),
               obscureText: true,
             ),
           ),
           TextButton(
             onPressed: signIn,
-            child: const Text('Sign In'),
+            child: const Text('Sign Up'),
           ),
           RichText(
             text: TextSpan(
-              style: const TextStyle(color: Colors.black, fontSize: 16),
-              text: 'No Account?   ',
-              children: [
-                TextSpan(
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = widget.onCLickedSignUp,
-                  text: 'Sign Up',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Theme.of(context).colorScheme.secondary,
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+                text: 'Already have an account?   ',
+                children: [
+                  TextSpan(
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = widget.onCLickedSignUp,
+                      text: 'Log In',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Theme.of(context).colorScheme.secondary,
+                      )
                   )
-                )
-              ]
+                ]
             ),
           )
         ],
@@ -80,8 +82,8 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   Future signIn() async {
-        try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: userNameController.text.trim(),
         password: passwordController.text.trim(),
       );

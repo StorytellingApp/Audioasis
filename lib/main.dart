@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'login_widget.dart';
 import 'home_page.dart';
+import 'auth_page.dart';
 
 Future main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -139,7 +140,7 @@ class MainPage extends StatelessWidget {
         } else if (snapshot.hasData){
           return HomePage();
         } else {
-          return LoginWidget();
+          return AuthPage();
         }
       },
     )
