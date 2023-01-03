@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'auth_page.dart';
+import 'utils.dart';
 
 class LoginWidget extends StatefulWidget {
   final VoidCallback onCLickedSignUp;
@@ -80,13 +81,15 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   Future signIn() async {
-        try {
+    try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: userNameController.text.trim(),
         password: passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
       print(e);
+
+      Utils.showSnackBar(e.message);
     }
   }
 }

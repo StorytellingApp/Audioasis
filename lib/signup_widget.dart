@@ -6,6 +6,8 @@ import 'home_page.dart';
 import 'main.dart';
 import 'auth_page.dart';
 import 'package:flutter/gestures.dart';
+import 'package:email_validator/email_validator.dart';
+import 'utils.dart';
 
 class SignUpWidget extends StatefulWidget {
   final VoidCallback onCLickedSignUp;
@@ -17,6 +19,7 @@ class SignUpWidget extends StatefulWidget {
 }
 
 class _SignUpWidgetState extends State<SignUpWidget> {
+  final formKey = GlobalKey<FormState>();
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -31,28 +34,39 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Column(
+      child: Form(
+        key: formKey,
+        child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(16),
-            child: TextField(
+            child: TextFormField(
               controller: userNameController,
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                   labelText: 'Email'
               ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (email) =>
+              email != null && !EmailValidator.validate(email)
+              ? 'Enter a valid email'
+              : null,
             ),
           ),
           Container(
             padding: const EdgeInsets.all(16),
-            child: TextField(
+            child: TextFormField(
               controller: passwordController,
               textInputAction: TextInputAction.done,
               decoration: const InputDecoration(
                   labelText: 'Password'
               ),
               obscureText: true,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => value != null && value.length < 6
+              ? 'Enter 6 characters minimum'
+              : null,
             ),
           ),
           TextButton(
@@ -78,10 +92,14 @@ class _SignUpWidgetState extends State<SignUpWidget> {
           )
         ],
       ),
+      )
     );
   }
 
   Future signIn() async {
+    final isValid = formKey.currentState!.validate();
+    if (!isValid) return;
+
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: userNameController.text.trim(),
@@ -89,6 +107,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       );
     } on FirebaseAuthException catch (e) {
       print(e);
+
+      Utils.showSnackBar(e.message);
     }
   }
 }
