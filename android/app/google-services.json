@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "169780628938",
+    "project_id": "fir-test-9e920",
+    "storage_bucket": "fir-test-9e920.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169780628938:android:753e1ec419f25cc741d333",
+        "android_client_info": {
+          "package_name": "com.tests.destudio_test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169780628938-jpi3h1qg72u3cs18h615qn0qvm7qs7tf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDItNjUkbD-oyJcWxQX7NByFmDweIik_6k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "169780628938-jpi3h1qg72u3cs18h615qn0qvm7qs7tf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
