@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'login_widget.dart';
+import 'home_page.dart';
 
 Future main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -7,6 +10,8 @@ Future main() async{
 
   runApp(const MyApp());
 }
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -28,7 +33,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MainPage(),
     );
   }
 }
@@ -117,3 +122,27 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+class MainPage extends StatelessWidget {
+  const MainPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    body: StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting){
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('SOmething went Wrong'));
+        } else if (snapshot.hasData){
+          return HomePage();
+        } else {
+          return LoginWidget();
+        }
+      },
+    )
+  );
+}
+
