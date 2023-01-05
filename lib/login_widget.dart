@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'auth_page.dart';
 import 'utils.dart';
+import 'forgot_password_page.dart';
 
 class LoginWidget extends StatefulWidget {
   final VoidCallback onCLickedSignUp;
@@ -58,6 +59,20 @@ class _LoginWidgetState extends State<LoginWidget> {
             onPressed: signIn,
             child: const Text('Sign In'),
           ),
+          GestureDetector(
+            child: Text(
+              'Forgot Password?',
+              style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: Theme.of(context).colorScheme.secondary,
+                fontSize: 16,
+              ),
+            ),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ForgotPasswordPage()
+            )),
+          ),
+          const SizedBox(height: 16,),
           RichText(
             text: TextSpan(
               style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -81,6 +96,12 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   Future signIn() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator(),)
+    );
+
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: userNameController.text.trim(),
@@ -91,5 +112,7 @@ class _LoginWidgetState extends State<LoginWidget> {
 
       Utils.showSnackBar(e.message);
     }
+
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }

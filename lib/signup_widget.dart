@@ -100,6 +100,12 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator(),)
+    );
+
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: userNameController.text.trim(),
@@ -110,5 +116,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
 
       Utils.showSnackBar(e.message);
     }
+
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }
