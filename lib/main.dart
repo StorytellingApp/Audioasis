@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       scaffoldMessengerKey: Utils.messengerKey,
       navigatorKey: navigatorKey,
-      title: 'New Demo',
+      title: 'New Demo1',
       theme: ThemeData(
         // This is the theme of your application.
         //
