@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Logged In'),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Center(
             child: Text('Logged in as')
