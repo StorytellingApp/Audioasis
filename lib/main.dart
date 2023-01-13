@@ -5,6 +5,7 @@ import 'login_widget.dart';
 import 'home_page.dart';
 import 'auth_page.dart';
 import 'utils.dart';
+import 'verify_email_page.dart';
 
 Future main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -139,9 +140,9 @@ class MainPage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting){
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('SOmething went Wrong'));
+          return Center(child: Text('Something went Wrong'));
         } else if (snapshot.hasData){
-          return HomePage();
+          return VerifyEmailPage();
         } else {
           return AuthPage();
         }

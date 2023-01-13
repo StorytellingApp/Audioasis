@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'auth_page.dart';
+import 'play_audio.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Logged In'),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Center(
             child: Text('Logged in as')
@@ -34,6 +36,13 @@ class _HomePageState extends State<HomePage> {
           TextButton(onPressed: () => FirebaseAuth.instance.signOut(),
               child: const Text('Logout')
           ),
+          const SizedBox(height: 50,),
+          TextButton(
+            onPressed: () => Navigator.push(context,MaterialPageRoute(
+              builder: (context) => PlayAudioWidget()
+            )),
+            child: const Text('Go To Audio Player'),
+          )
         ],
       ),
     );
