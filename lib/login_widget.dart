@@ -29,68 +29,110 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: userNameController,
-              textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                labelText: 'Email'
+    return MaterialApp(
+      // padding: const EdgeInsets.all(16),
+      home: Scaffold(
+        body: SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const CircleAvatar(
+                radius: 100.0,
+                backgroundImage: AssetImage('images/Classy-Logo-AO.jpg'),
               ),
+              const SizedBox(
+                height: 40.0,
+              ),
+              Card(
+                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.email,
+                    color: Colors.blueGrey,
+                  ),
+                  title: TextField(
+                    controller: userNameController,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                        labelText: 'Email'
+                    ),
+                  ),
+              ),
+              ),
+            Card(
+              margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+              child: ListTile(
+                leading: const Icon(
+                  Icons.lock,
+                  color: Colors.blueGrey,
+                ),
+                title: TextField(
+                  controller: passwordController,
+                  textInputAction: TextInputAction.done,
+                  decoration: const InputDecoration(
+                      labelText: 'Password'
+                  ),
+                obscureText: true,
+                ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: passwordController,
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                labelText: 'Password'
-              ),
-              obscureText: true,
-            ),
-          ),
-          TextButton(
-            onPressed: signIn,
-            child: const Text('Sign In'),
-          ),
-          GestureDetector(
-            child: Text(
-              'Forgot Password?',
-              style: TextStyle(
-                decoration: TextDecoration.underline,
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: 16,
-              ),
-            ),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ForgotPasswordPage()
-            )),
-          ),
-          const SizedBox(height: 16,),
-          RichText(
-            text: TextSpan(
-              style: const TextStyle(color: Colors.black, fontSize: 16),
-              text: 'No Account?   ',
-              children: [
-                TextSpan(
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = widget.onCLickedSignUp,
-                  text: 'Sign Up',
+              GestureDetector(
+                child: Text(
+                  'Forgot Password?',
+                  // textAlign: TextAlign.right, (NEED TO FIND A WAY TO ALIGN FORGOT PASS TO THE RIGHT)
                   style: TextStyle(
                     decoration: TextDecoration.underline,
                     color: Theme.of(context).colorScheme.secondary,
-                  )
-                )
-              ]
+                    fontSize: 16,
+                  ),
+                ),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ForgotPasswordPage()
+                )),
+              ),
+            TextButton(
+              onPressed: signIn,
+              child: const Text(
+                  'Sign In',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
             ),
-          )
-        ],
+          //   GestureDetector(
+          //     child: Text(
+          //       'Forgot Password?',
+          //       style: TextStyle(
+          //         decoration: TextDecoration.underline,
+          //         color: Theme.of(context).colorScheme.secondary,
+          //         fontSize: 16,
+          //       ),
+          //     ),
+          //     onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          //       builder: (context) => ForgotPasswordPage()
+          //   )),
+          // ),
+            const SizedBox(height: 16),
+            RichText(
+              text: TextSpan(
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  text: 'No Account?   ',
+                  children: [
+                    TextSpan(
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = widget.onCLickedSignUp,
+                        text: 'Sign Up',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                     ),
+                   ],
+                 ),
+               ),
+            ],
+          ),
+        ),
       ),
     );
   }
