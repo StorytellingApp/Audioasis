@@ -25,30 +25,47 @@ class _PlayAudioWidgetState extends State<PlayAudioWidget> {
 
   @override
   void initState() {
+    super.initState();
+
+    setAudio();
 
     //play, pause, etc
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        isPlaying = state == PlayerState.playing;
+    if (mounted){
+      audioPlayer.onPlayerStateChanged.listen((state) {
+        if (mounted) {
+          setState(() {
+            isPlaying = state == PlayerState.playing;
+          });
+        }
+
       });
-    });
+    }
+
 
     //duration
-    audioPlayer.onDurationChanged.listen((newDuration) {
-      setState(() {
-        duration = newDuration;
+    if (mounted){
+      audioPlayer.onDurationChanged.listen((newDuration) {
+        if (mounted) {
+          setState(() {
+            duration = newDuration;
+          });
+        }
+
       });
-    });
+    }
+
 
     //audio position
-    audioPlayer.onPositionChanged.listen((newPosition) {
-      setState(() {
-        position = newPosition;
+    if (mounted){
+      audioPlayer.onPositionChanged.listen((newPosition) {
+        if (mounted) {
+          setState(() {
+            position = newPosition;
+          });
+        }
       });
-    });
+    }
 
-
-    super.initState();
   }
 
   @override
@@ -56,6 +73,13 @@ class _PlayAudioWidgetState extends State<PlayAudioWidget> {
     audioPlayer.dispose();
 
     super.dispose();
+  }
+
+  Future setAudio() async {
+    audioPlayer.setReleaseMode(ReleaseMode.release);
+
+    String storyURL = await storageRef.child("Audio/Test2.mp3").getDownloadURL();
+    audioPlayer.setSource(UrlSource(storyURL));
   }
   
   
@@ -76,7 +100,10 @@ class _PlayAudioWidgetState extends State<PlayAudioWidget> {
             min: 0,
             max: duration.inSeconds.toDouble(),
             value: position.inSeconds.toDouble(),
-            onChanged: (value) async {},
+            onChanged: (value) async {
+              final position = Duration(seconds: value.toInt());
+              await audioPlayer.seek(position);
+            },
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -99,8 +126,7 @@ class _PlayAudioWidgetState extends State<PlayAudioWidget> {
                 if (isPlaying) {
                   await audioPlayer.pause();
                 } else {
-                  String storyURL = await storageRef.child("Audio/test.mp3").getDownloadURL();
-                  await audioPlayer.play(UrlSource(storyURL));
+                  await audioPlayer.resume();
                 }
               },
             ),

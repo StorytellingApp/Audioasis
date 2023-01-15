@@ -33,7 +33,8 @@ class _LoginWidgetState extends State<LoginWidget> {
       // padding: const EdgeInsets.all(16),
       home: Scaffold(
         body: SafeArea(
-          child: Column(
+          child: SingleChildScrollView(
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               const CircleAvatar(
@@ -57,25 +58,25 @@ class _LoginWidgetState extends State<LoginWidget> {
                         labelText: 'Email'
                     ),
                   ),
-              ),
-              ),
-            Card(
-              margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-              child: ListTile(
-                leading: const Icon(
-                  Icons.lock,
-                  color: Colors.blueGrey,
                 ),
-                title: TextField(
-                  controller: passwordController,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(
-                      labelText: 'Password'
+              ),
+              Card(
+                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.lock,
+                    color: Colors.blueGrey,
                   ),
-                obscureText: true,
+                  title: TextField(
+                    controller: passwordController,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(
+                        labelText: 'Password'
+                    ),
+                    obscureText: true,
+                  ),
                 ),
-            ),
-          ),
+              ),
               GestureDetector(
                 child: Text(
                   'Forgot Password?',
@@ -90,48 +91,50 @@ class _LoginWidgetState extends State<LoginWidget> {
                     builder: (context) => ForgotPasswordPage()
                 )),
               ),
-            TextButton(
-              onPressed: signIn,
-              child: const Text(
+              TextButton(
+                onPressed: signIn,
+                child: const Text(
                   'Sign In',
-                style: TextStyle(
-                  fontSize: 18,
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
                 ),
               ),
-            ),
-          //   GestureDetector(
-          //     child: Text(
-          //       'Forgot Password?',
-          //       style: TextStyle(
-          //         decoration: TextDecoration.underline,
-          //         color: Theme.of(context).colorScheme.secondary,
-          //         fontSize: 16,
-          //       ),
-          //     ),
-          //     onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          //       builder: (context) => ForgotPasswordPage()
-          //   )),
-          // ),
-            const SizedBox(height: 16),
-            RichText(
-              text: TextSpan(
+              //   GestureDetector(
+              //     child: Text(
+              //       'Forgot Password?',
+              //       style: TextStyle(
+              //         decoration: TextDecoration.underline,
+              //         color: Theme.of(context).colorScheme.secondary,
+              //         fontSize: 16,
+              //       ),
+              //     ),
+              //     onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              //       builder: (context) => ForgotPasswordPage()
+              //   )),
+              // ),
+              const SizedBox(height: 16),
+              RichText(
+                text: TextSpan(
                   style: const TextStyle(color: Colors.black, fontSize: 16),
                   text: 'No Account?   ',
                   children: [
                     TextSpan(
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = widget.onCLickedSignUp,
-                        text: 'Sign Up',
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                     ),
-                   ],
-                 ),
-               ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = widget.onCLickedSignUp,
+                      text: 'Sign Up',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
+          )
+
         ),
       ),
     );
