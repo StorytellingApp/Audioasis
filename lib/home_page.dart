@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'main.dart';
 import 'auth_page.dart';
 import 'play_audio.dart';
+import 'firestore_test_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -42,6 +43,13 @@ class _HomePageState extends State<HomePage> {
               builder: (context) => PlayAudioWidget()
             )),
             child: const Text('Go To Audio Player'),
+          ),
+          const SizedBox(height: 50,),
+          TextButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FirePageTest()
+            )),
+            child: const Text('Go To Firestore Test Page'),
           )
         ],
       ),
