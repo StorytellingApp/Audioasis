@@ -17,13 +17,19 @@ class FirePageTest extends StatefulWidget {
 
 class _FirePageTestState extends State<FirePageTest> {
   final firstController = TextEditingController();
+  final secondController = TextEditingController();
+  final dateController = TextEditingController();
 
   @override
   void dispose(){
     firstController.dispose();
+    secondController.dispose();
+    dateController.dispose();
 
     super.dispose();
   }
+
+  //TODO: add validation
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +42,34 @@ class _FirePageTestState extends State<FirePageTest> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextFormField(controller: firstController,),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextFormField(controller: firstController,
+                  decoration: const InputDecoration(border: OutlineInputBorder(),
+                      hintText: 'Name'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextFormField(controller: secondController,
+                  decoration: const InputDecoration(border: OutlineInputBorder(),
+                      hintText: 'Age'),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextFormField(controller: dateController,
+                  decoration: const InputDecoration(border: OutlineInputBorder(),
+                      hintText: 'Birth Year'),
+                ),
+              ),
               TextButton(
                 onPressed: () {
                   final name = firstController.text.trim();
+                  final age = secondController.text.trim();
+                  final year = dateController.text.trim();
 
-                  createUser(name: name);
+                  createUser(name: name, age: age, birthYear: year);
                 },
                 child: const Text('Send'),
               ),
@@ -52,13 +80,13 @@ class _FirePageTestState extends State<FirePageTest> {
     );
   }
 
-  Future createUser({required String name}) async {
+  Future createUser({required String name, required String age, required String birthYear}) async {
     final docTest = FirebaseFirestore.instance.collection('test').doc();
 
     final json = {
       'name': name,
-      'age': 22,
-      'birthday':DateTime(2000,5,9),
+      'age': age,
+      'birthday':birthYear,
       'id': docTest.id,
     };
 

@@ -6,6 +6,7 @@ import 'main.dart';
 import 'auth_page.dart';
 import 'play_audio.dart';
 import 'firestore_test_page.dart';
+import 'firestore_read_test.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -37,19 +38,26 @@ class _HomePageState extends State<HomePage> {
           TextButton(onPressed: () => FirebaseAuth.instance.signOut(),
               child: const Text('Logout')
           ),
-          const SizedBox(height: 50,),
+          const SizedBox(height: 25,),
           TextButton(
             onPressed: () => Navigator.push(context,MaterialPageRoute(
               builder: (context) => PlayAudioWidget()
             )),
             child: const Text('Go To Audio Player'),
           ),
-          const SizedBox(height: 50,),
+          const SizedBox(height: 25,),
           TextButton(
             onPressed: () => Navigator.push(context, MaterialPageRoute(
               builder: (context) => FirePageTest()
             )),
-            child: const Text('Go To Firestore Test Page'),
+            child: const Text('Go To Firestore Write Page'),
+          ),
+          const SizedBox(height: 25,),
+          TextButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(
+                builder: (context) => FirestoreWriteTest()
+            )),
+            child: const Text('Go To Firestore Read Page'),
           )
         ],
       ),
