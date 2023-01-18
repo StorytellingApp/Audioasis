@@ -14,16 +14,30 @@ class Utils {
   }
 }
 
-class PlaylistTest {
-  Map<String,String> stories = {};
+class TestUser {
+  String id;
+  final String name;
+  final String age;
+  final String birthday;
 
-  void addItem({required String name, required String downloadURL}){
-    Map<String,String> temp = {name: downloadURL};
-    stories.addAll(temp);
-  }
+  TestUser({
+    this.id = '',
+    required this.name,
+    required this.age,
+    required this.birthday,
+  });
 
-  Iterable<MapEntry<String,String>> getItems() {
-    return stories.entries;
-  }
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'age': age,
+    'birthday': birthday,
+  };
 
+  static TestUser fromJson(Map<String, dynamic> json) => TestUser(
+    id: json['id'],
+    name: json['name'],
+    age: json['age'],
+    birthday: json['birthday'],
+  );
 }

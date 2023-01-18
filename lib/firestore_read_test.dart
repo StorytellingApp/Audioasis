@@ -16,7 +16,6 @@ class FirestoreWriteTest extends StatefulWidget {
 }
 
 class _FirestoreWriteTestState extends State<FirestoreWriteTest> {
-  CollectionReference users = FirebaseFirestore.instance.collection('test');
 
   @override
   Widget build(BuildContext context) {
@@ -25,33 +24,46 @@ class _FirestoreWriteTestState extends State<FirestoreWriteTest> {
         title: const Text('Reading Data'),
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FutureBuilder(
-              future: users.doc('1qy43kRjgFPqHWCnBDkL').get(),
-              builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
-                if (snapshot.hasError) {
-                  return const Text('Something went wrong');
-                }
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              StreamBuilder<List<TestUser>>(
+                stream: readTestUsers(),
+                builder: (context,snapshot) {
+                  if (snapshot.hasError){
+                    return const Text('Something went wrong');
+                  }else if (snapshot.hasData){
+                    final users = snapshot.data!;
 
-                if (snapshot.hasData && !snapshot.data!.exists){
-                  return const Text('Document Does Not Exist');
-                }
-
-                if (snapshot.connectionState == ConnectionState.done){
-                  Map<String,dynamic> data = snapshot.data!.data() as Map<String,dynamic>;
-                  return Text("Name: ${data['name']}");
-                }
-
-                return Text('loading');
-              },
-            ),
-          ],
+                    return ListView(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      children: users.map(buildTestUser).toList(),
+                    );
+                  }else{
+                    return const Center(child: CircularProgressIndicator(),);
+                  }
+                },
+              )
+            ],
+          ),
         ),
+
       ),
     );
   }
+
+  Widget buildTestUser (TestUser user) => ListTile(
+    leading: CircleAvatar(child: Text(user.age),),
+    title: Text(user.name),
+    subtitle: Text(user.birthday),
+  );
+
+  Stream<List<TestUser>> readTestUsers() => FirebaseFirestore.instance.collection('test').where('age',isEqualTo: '40')
+      .snapshots()
+      .map((snapshot) =>
+        snapshot.docs.map((doc) => TestUser.fromJson(doc.data())).toList());
 
   Stream<Iterable<String>> getNames() {
     final test =  FirebaseFirestore.instance.collection('test').snapshots();
