@@ -41,3 +41,5 @@ class TestUser {
     birthday: json['birthday'],
   );
 }
+
+//Check https://firebase.flutter.dev/docs/firestore/usage/ for 'ArrayContains'
