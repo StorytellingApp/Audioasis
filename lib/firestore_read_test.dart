@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
+import 'userClasses.dart';
 
 class FirestoreWriteTest extends StatefulWidget {
   const FirestoreWriteTest({Key? key}) : super(key: key);
