@@ -46,7 +46,7 @@ class _FirePageTestState extends State<FirePageTest> {
                 padding: const EdgeInsets.all(16),
                 child: TextFormField(controller: firstController,
                   decoration: const InputDecoration(border: OutlineInputBorder(),
-                      hintText: 'Name'),
+                      hintText: 'Story Name'),
                 ),
               ),
               Padding(

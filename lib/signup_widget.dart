@@ -1,5 +1,7 @@
+import 'package:destudio_test/userClasses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'login_widget.dart';
 import 'home_page.dart';
@@ -22,11 +24,16 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   final formKey = GlobalKey<FormState>();
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
+  final firstNameController = TextEditingController();
+  final lastNameController = TextEditingController();
 
   @override
   void dispose() {
     userNameController.dispose();
     passwordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+
     super.dispose();
   }
 
@@ -58,7 +65,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
             padding: const EdgeInsets.all(16),
             child: TextFormField(
               controller: passwordController,
-              textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                   labelText: 'Password'
               ),
@@ -66,6 +73,34 @@ class _SignUpWidgetState extends State<SignUpWidget> {
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) => value != null && value.length < 6
               ? 'Enter 6 characters minimum'
+              : null,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: firstNameController,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                labelText: 'First Name'
+              ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => value != null && value.isEmpty
+              ? 'Enter a Name'
+              : null,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: lastNameController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(
+                labelText: 'Last Name'
+              ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => value != null && value.isEmpty
+              ? 'Enter a Name'
               : null,
             ),
           ),
@@ -111,6 +146,16 @@ class _SignUpWidgetState extends State<SignUpWidget> {
         email: userNameController.text.trim(),
         password: passwordController.text.trim(),
       );
+
+      //Added for creating user info
+      final userID = FirebaseAuth.instance.currentUser!.uid;
+      print(userID);
+
+      final test = AppUser(userID: userID, firstName: firstNameController.text.trim(),
+          lastName: lastNameController.text.trim(), imageURL: '');
+      final docTest = FirebaseFirestore.instance.collection('Users').doc(userID);
+      docTest.set(test.toJson());
+
     } on FirebaseAuthException catch (e) {
       print(e);
 
