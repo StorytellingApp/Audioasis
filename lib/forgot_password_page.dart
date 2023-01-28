@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'utils.dart';
 
+//References:
+//https://www.youtube.com/watch?v=4vKiJZNPhss
+
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
 
@@ -68,7 +71,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       Utils.showSnackBar('Password Reset Email Sent');
       Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
-      print(e);
 
       Utils.showSnackBar(e.message);
       Navigator.of(context).pop();

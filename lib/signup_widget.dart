@@ -2,14 +2,13 @@ import 'package:destudio_test/userClasses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'login_widget.dart';
-import 'home_page.dart';
 import 'main.dart';
-import 'auth_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:email_validator/email_validator.dart';
 import 'utils.dart';
+
+//References:
+//https://www.youtube.com/watch?v=4vKiJZNPhss
 
 class SignUpWidget extends StatefulWidget {
   final VoidCallback onCLickedSignUp;

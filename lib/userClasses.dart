@@ -1,12 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/gestures.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'main.dart';
-import 'auth_page.dart';
-import 'play_audio.dart';
-
-
 class Playlist {
   String playlistID; //playlistID
   String authorID; // Check if userID equals this; if so, allow edits

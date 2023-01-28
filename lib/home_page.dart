@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/gestures.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'main.dart';
-import 'auth_page.dart';
 import 'play_audio.dart';
 import 'firestore_test_page.dart';
 import 'firestore_read_test.dart';

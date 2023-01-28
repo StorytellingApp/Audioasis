@@ -5,12 +5,22 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core_platform_interface/firebase_core_platform_interface.dart';
 
 import 'package:destudio_test/main.dart';
 
 void main() {
+  //TestWidgetsFlutterBinding.ensureInitialized();
+
+  /*
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
@@ -26,5 +36,20 @@ void main() {
     // Verify that our counter has incremented.
     expect(find.text('0'), findsNothing);
     expect(find.text('1'), findsOneWidget);
+  });*/
+
+  testWidgets('Initial Page', (WidgetTester tester) async {
+    //WidgetsFlutterBinding.ensureInitialized();
+    //TestWidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp();
+    FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+    FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+    FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+
+    await tester.pumpWidget(const MyApp());
+
+    //Verify Starts at Log In
+    expect(find.text('Log In'), findsOneWidget);
+    expect(find.text('Sign Up'), findsNothing);
   });
 }

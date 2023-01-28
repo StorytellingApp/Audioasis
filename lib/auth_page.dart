@@ -1,10 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'login_widget.dart';
-import 'home_page.dart';
-import 'main.dart';
 import 'signup_widget.dart';
+
+//References:
+//https://www.youtube.com/watch?v=4vKiJZNPhss
 
 class AuthPage extends StatefulWidget {
   const AuthPage({Key? key}) : super(key: key);

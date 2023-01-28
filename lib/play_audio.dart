@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:math';
-import 'package:destudio_test/home_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'utils.dart';
 import 'package:audioplayers/audioplayers.dart';
+
+//References:
+//https://www.youtube.com/watch?v=MB3YGQ-O1lk
 
 class PlayAudioWidget extends StatefulWidget {
   const PlayAudioWidget({Key? key}) : super(key: key);

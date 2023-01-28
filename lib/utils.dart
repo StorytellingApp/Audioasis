@@ -1,5 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+//References:
+//https://www.youtube.com/watch?v=4vKiJZNPhss
 
 class Utils {
   static final messengerKey = GlobalKey<ScaffoldMessengerState>();

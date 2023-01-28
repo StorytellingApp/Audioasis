@@ -4,6 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
 
+//References:
+//https://www.youtube.com/watch?v=4vKiJZNPhss
+
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({Key? key}) : super(key: key);
 
@@ -27,7 +30,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       sendVerificationEmail();
 
       timer = Timer.periodic(
-        Duration(seconds: 3),
+        const Duration(seconds: 3),
           (_) => checkEmailVerified(),
       );
     }
@@ -66,7 +69,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
   @override
   Widget build(BuildContext context) => isEmailVerified
-      ? HomePage()
+      ? const HomePage()
       : Scaffold(
         appBar: AppBar(
           title: const Text('Verify Email'),
@@ -75,11 +78,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Verification email has been sent', style: TextStyle(fontSize: 20),),
-            SizedBox(height: 20,),
+            const Text('Verification email has been sent', style: TextStyle(fontSize: 20),),
+            const SizedBox(height: 20,),
             TextButton(
               onPressed: canResendEmail ? sendVerificationEmail : null,
-              child: Text('Resend Email'),
+              child: const Text('Resend Email'),
             ),
             TextButton(
               onPressed: () => FirebaseAuth.instance.signOut(),
