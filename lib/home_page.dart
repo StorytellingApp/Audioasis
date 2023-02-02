@@ -1,3 +1,4 @@
+import 'package:destudio_test/upload_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'play_audio.dart';
@@ -37,24 +38,31 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 25,),
           TextButton(
             onPressed: () => Navigator.push(context,MaterialPageRoute(
-              builder: (context) => PlayAudioWidget()
+              builder: (context) => const PlayAudioWidget()
             )),
             child: const Text('Go To Audio Player'),
           ),
           const SizedBox(height: 25,),
           TextButton(
             onPressed: () => Navigator.push(context, MaterialPageRoute(
-              builder: (context) => FirePageTest()
+              builder: (context) => const FirePageTest()
             )),
             child: const Text('Go To Firestore Write Page'),
           ),
           const SizedBox(height: 25,),
           TextButton(
             onPressed: () => Navigator.push(context, MaterialPageRoute(
-                builder: (context) => FirestoreWriteTest()
+                builder: (context) => const FirestoreWriteTest()
             )),
             child: const Text('Go To Firestore Read Page'),
-          )
+          ),
+          const SizedBox(height: 25,),
+          TextButton(
+            onPressed: () => Navigator.push(context, MaterialPageRoute(
+                builder: (context) => const UploadAudio()
+            )),
+            child: const Text('Go To Upload Audio Page'),
+          ),
         ],
       ),
     );
