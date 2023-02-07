@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +10,51 @@ import 'dart:io';
 
 //https://www.youtube.com/watch?v=Jt3OSCe7eOw
 //https://pub.dev/packages/file_picker
+//https://github.com/miguelpruivo/flutter_file_picker/wiki/API#filters
+
+
+
+
+
+class UploadTabPage extends StatefulWidget {
+  const UploadTabPage({Key? key}) : super(key: key);
+
+  @override
+  State<UploadTabPage> createState() => _UploadTabPageState();
+}
+
+class _UploadTabPageState extends State<UploadTabPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Upload'),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class UploadAudio extends StatefulWidget {
   const UploadAudio({Key? key}) : super(key: key);

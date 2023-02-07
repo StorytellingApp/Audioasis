@@ -1,9 +1,16 @@
+import 'package:destudio_test/library_pages.dart';
 import 'package:destudio_test/upload_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'play_audio.dart';
 import 'firestore_test_page.dart';
 import 'firestore_read_test.dart';
+import 'search_pages.dart';
+import 'upload_pages.dart';
+import 'search_pages.dart';
+import 'main_home_page.dart';
+
+//https://stackoverflow.com/questions/46891916/flutter-change-main-appbar-title-on-other-pages
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,9 +22,44 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser!;
 
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        /*
+        appBar: AppBar(
+          title: const Text('1'),
+        ),*/
+        bottomNavigationBar: Material(
+          color: Theme.of(context).colorScheme.primary,
+          child: const TabBar(
+            tabs: <Widget>[
+              Tab(icon: Icon(Icons.home),),
+              Tab(icon: Icon(Icons.search),),
+              Tab(icon: Icon(Icons.add_circle_outline),),
+              Tab(icon: Icon(Icons.library_books),),
+            ],
+          ),
+        ),
+        body: const TabBarView(
+          children: [
+            //TODO: Pages go here
+            HomeTabPage(),
+            SearchTabPage(),
+            UploadTabPage(),
+            LibraryTabPage(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/*
+Scaffold(
       appBar: AppBar(
         title: const Text('Logged In'),
       ),
@@ -66,6 +108,4 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-  }
-}
-
+ */
