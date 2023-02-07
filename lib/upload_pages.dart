@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,25 +25,51 @@ class UploadTabPage extends StatefulWidget {
 }
 
 class _UploadTabPageState extends State<UploadTabPage> {
+  PlatformFile? pickedImage;
+  UploadTask? imageUploadTask;
+
+  Future pickImage() async {
+    final userImage = await FilePicker.platform.pickFiles(type: FileType.image);
+    if (userImage == null) return;
+
+    setState(() {
+      pickedImage = userImage.files.first;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Upload'),
+      ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              //TODO: add form validation
+              const SizedBox(height: 10,),
+              (pickedImage == null) ? const SizedBox(height: 250,child: Text('No Image Selected'),) : Image.file(File(pickedImage!.path!),fit: BoxFit.fitWidth,height: 250,),
+              ElevatedButton(onPressed: pickImage, //TODO: Fix image sizing and whatnot
+                child: (pickedImage == null) ? const Text('Pick an Image') : const Text('Choose Another Image')
+              ),
+              const SizedBox(height: 10,),
+              RichText(
+                text: TextSpan(
+                  text: 'Story Type:   ',
+                  children: [
+                    TextSpan(
+                      //TODO: add tapgesture recognizer
+                    )
+                  ]
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
