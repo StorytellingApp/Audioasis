@@ -13,6 +13,7 @@ import 'dart:io';
 //https://pub.dev/packages/file_picker
 //https://github.com/miguelpruivo/flutter_file_picker/wiki/API#filters
 
+enum UploadType {single, chapter}
 
 
 
@@ -27,6 +28,8 @@ class UploadTabPage extends StatefulWidget {
 class _UploadTabPageState extends State<UploadTabPage> {
   PlatformFile? pickedImage;
   UploadTask? imageUploadTask;
+  UploadType? _uploadType = UploadType.single;
+
 
   Future pickImage() async {
     final userImage = await FilePicker.platform.pickFiles(type: FileType.image);
@@ -35,6 +38,22 @@ class _UploadTabPageState extends State<UploadTabPage> {
     setState(() {
       pickedImage = userImage.files.first;
     });
+  }
+
+  Widget singleStory() {
+    return Column(
+      children: [
+        const Text('Single'),
+      ],
+    );
+  }
+
+  Widget chapterStory() {
+    return Column(
+      children: [
+        const Text('Chapter'),
+      ],
+    );
   }
 
   @override
@@ -53,16 +72,31 @@ class _UploadTabPageState extends State<UploadTabPage> {
                 child: (pickedImage == null) ? const Text('Pick an Image') : const Text('Choose Another Image')
               ),
               const SizedBox(height: 10,),
-              RichText(
-                text: TextSpan(
-                  text: 'Story Type:   ',
-                  children: [
-                    TextSpan(
-                      //TODO: add tapgesture recognizer
-                    )
-                  ]
+              ListTile(
+                title: const Text('Single'),
+                leading: Radio<UploadType>(
+                  value: UploadType.single,
+                  groupValue: _uploadType,
+                  onChanged: (UploadType? value) {
+                    setState(() {
+                      _uploadType = value;
+                    });
+                  },
                 ),
               ),
+              ListTile(
+                title: const Text('Chapter'),
+                leading: Radio<UploadType>(
+                  value: UploadType.chapter,
+                  groupValue: _uploadType,
+                  onChanged: (UploadType? value){
+                    setState(() {
+                      _uploadType= value;
+                    });
+                  },
+                ),
+              ),
+              (_uploadType == UploadType.single) ? singleStory() : chapterStory(),
             ],
           ),
         ),
