@@ -14,6 +14,7 @@ import 'dart:io';
 //https://github.com/miguelpruivo/flutter_file_picker/wiki/API#filters
 
 enum UploadType {single, chapter}
+const List<String> uploadDropOptions = ['Single','Series'];
 
 
 
@@ -29,6 +30,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
   PlatformFile? pickedImage;
   UploadTask? imageUploadTask;
   UploadType? _uploadType = UploadType.single;
+  String _stringUpload = uploadDropOptions.first;
 
 
   Future pickImage() async {
@@ -72,31 +74,32 @@ class _UploadTabPageState extends State<UploadTabPage> {
                 child: (pickedImage == null) ? const Text('Pick an Image') : const Text('Choose Another Image')
               ),
               const SizedBox(height: 10,),
-              ListTile(
-                title: const Text('Single'),
-                leading: Radio<UploadType>(
-                  value: UploadType.single,
-                  groupValue: _uploadType,
-                  onChanged: (UploadType? value) {
-                    setState(() {
-                      _uploadType = value;
-                    });
-                  },
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Story Type'),
+                  SizedBox(width: 25,),
+                  DropdownButton<String>(
+                    value: _stringUpload,
+                    elevation: 16,
+                    underline: Container(
+                      height: 2,
+                    ),
+                    onChanged: (String? value) {
+                      setState(() {
+                        _stringUpload = value!;
+                      });
+                    },
+                    items: uploadDropOptions.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
-              ListTile(
-                title: const Text('Chapter'),
-                leading: Radio<UploadType>(
-                  value: UploadType.chapter,
-                  groupValue: _uploadType,
-                  onChanged: (UploadType? value){
-                    setState(() {
-                      _uploadType= value;
-                    });
-                  },
-                ),
-              ),
-              (_uploadType == UploadType.single) ? singleStory() : chapterStory(),
+              (_stringUpload == 'Single') ? singleStory() : chapterStory(),
             ],
           ),
         ),
