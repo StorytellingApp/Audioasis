@@ -45,6 +45,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         body: const TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
             //TODO: Pages go here
             HomeTabPage(),

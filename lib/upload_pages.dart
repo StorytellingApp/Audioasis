@@ -53,7 +53,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
   Widget chapterStory() {
     return Column(
       children: [
-        const Text('Chapter'),
+        const Text('Series'),
       ],
     );
   }
