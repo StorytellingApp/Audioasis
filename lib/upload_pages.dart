@@ -44,6 +44,8 @@ class _UploadTabPageState extends State<UploadTabPage> {
     super.dispose();
   }
 
+  Future uploadAll() async {}
+
   Future pickImage() async {
     final userImage = await FilePicker.platform.pickFiles(type: FileType.image);
     if (userImage == null) return;
@@ -95,7 +97,9 @@ class _UploadTabPageState extends State<UploadTabPage> {
             height: 10,
           ),
           const Text('Audio: Upload mp3 or WAV'),
-          const SizedBox(height: 15,),
+          const SizedBox(
+            height: 15,
+          ),
           if (pickedAudio != null)
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -108,7 +112,9 @@ class _UploadTabPageState extends State<UploadTabPage> {
             ),
           Row(
             children: [
-              const Spacer(flex: 1,),
+              const Spacer(
+                flex: 1,
+              ),
               ElevatedButton(
                   onPressed: pickAudio,
                   child: Row(
@@ -116,9 +122,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
                       Text('Upload Audio '),
                       Icon(Icons.upload),
                     ],
-                  )
+                  )),
+              const Spacer(
+                flex: 1,
               ),
-              const Spacer(flex: 1,),
             ],
           ),
           Container(
@@ -126,14 +133,18 @@ class _UploadTabPageState extends State<UploadTabPage> {
             child: TextFormField(
               controller: tagController,
               textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(labelText: 'Tags (Comma Separated)'),
+              decoration:
+                  const InputDecoration(labelText: 'Tags (Comma Separated)'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) => value != null && value.isEmpty ? 'Enter Tags' : null,
+              validator: (value) =>
+                  value != null && value.isEmpty ? 'Enter Tags' : null,
             ),
           ),
-          const SizedBox(height: 15,),
+          const SizedBox(
+            height: 15,
+          ),
           ElevatedButton(
-            onPressed: () => {},
+            onPressed: () => {}, //TODO: Do form validation
             child: const Text('Publish Story'),
           )
         ],
@@ -162,9 +173,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
                 height: 10,
               ),
               (pickedImage == null)
-                  ? const SizedBox(
+                  ? Image.asset(
+                      'images/NoImageDefault.jpg', //TODO: DOes not load
+                      fit: BoxFit.fitWidth,
                       height: 250,
-                      child: Text('No Image Selected'),
                     )
                   : Image.file(
                       File(pickedImage!.path!),
