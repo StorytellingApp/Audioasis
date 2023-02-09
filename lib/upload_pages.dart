@@ -34,11 +34,13 @@ class _UploadTabPageState extends State<UploadTabPage> {
   final singleFormKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+  final tagController = TextEditingController();
 
   @override
   void dispose() {
     titleController.dispose();
     descriptionController.dispose();
+    tagController.dispose();
     super.dispose();
   }
 
@@ -82,7 +84,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
             padding: const EdgeInsets.all(16),
             child: TextFormField(
               controller: descriptionController,
-              textInputAction: TextInputAction.next,
+              textInputAction: TextInputAction.done,
               decoration: const InputDecoration(labelText: 'Description'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
@@ -92,20 +94,48 @@ class _UploadTabPageState extends State<UploadTabPage> {
           const SizedBox(
             height: 10,
           ),
+          const Text('Audio: Upload mp3 or WAV'),
+          const SizedBox(height: 15,),
           if (pickedAudio != null)
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 Text('Audio Chosen'),
                 SizedBox(
                   height: 10,
                 ),
               ],
             ),
-          ElevatedButton(
-            onPressed: pickAudio,
-            child: const Text('Upload Audio'),
+          Row(
+            children: [
+              const Spacer(flex: 1,),
+              ElevatedButton(
+                  onPressed: pickAudio,
+                  child: Row(
+                    children: const [
+                      Text('Upload Audio '),
+                      Icon(Icons.upload),
+                    ],
+                  )
+              ),
+              const Spacer(flex: 1,),
+            ],
           ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: tagController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(labelText: 'Tags (Comma Separated)'),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => value != null && value.isEmpty ? 'Enter Tags' : null,
+            ),
+          ),
+          const SizedBox(height: 15,),
+          ElevatedButton(
+            onPressed: () => {},
+            child: const Text('Publish Story'),
+          )
         ],
       ),
     );
@@ -113,8 +143,8 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
   Widget chapterStory() {
     return Column(
-      children: [
-        const Text('Series'),
+      children: const [
+        Text('Series'),
       ],
     );
   }
@@ -153,7 +183,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text('Story Type'),
-                  SizedBox(
+                  const SizedBox(
                     width: 25,
                   ),
                   DropdownButton<String>(
