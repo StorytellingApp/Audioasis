@@ -22,8 +22,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser!;
 
-
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -37,10 +35,18 @@ class _HomePageState extends State<HomePage> {
           color: Theme.of(context).colorScheme.primary,
           child: const TabBar(
             tabs: <Widget>[
-              Tab(icon: Icon(Icons.home),),
-              Tab(icon: Icon(Icons.search),),
-              Tab(icon: Icon(Icons.add_circle_outline),),
-              Tab(icon: Icon(Icons.library_books),),
+              Tab(
+                icon: Icon(Icons.home),
+              ),
+              Tab(
+                icon: Icon(Icons.search),
+              ),
+              Tab(
+                icon: Icon(Icons.add_circle_outline),
+              ),
+              Tab(
+                icon: Icon(Icons.book),
+              ),
             ],
           ),
         ),
