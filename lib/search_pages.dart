@@ -16,11 +16,19 @@ class SearchTabPage extends StatefulWidget {
 }
 
 class _SearchTabPageState extends State<SearchTabPage> {
+  Future signOut() async {
+    FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search'),
+      ),
+      body: ElevatedButton(
+        onPressed: signOut,
+        child: const Text('Logout'),
       ),
     );
   }

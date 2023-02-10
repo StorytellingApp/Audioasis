@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return SafeArea( //TODO: adjust safearea widget
       child: DefaultTabController(
         length: 4,
         child: Scaffold(
