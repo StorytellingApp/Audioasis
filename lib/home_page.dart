@@ -24,41 +24,43 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 4,
-      child: Scaffold(
-        /*
+    return SafeArea(
+      child: DefaultTabController(
+        length: 4,
+        child: Scaffold(
+          /*
         appBar: AppBar(
           title: const Text('1'),
         ),*/
-        bottomNavigationBar: Material(
-          color: Theme.of(context).colorScheme.primary,
-          child: const TabBar(
-            tabs: <Widget>[
-              Tab(
-                icon: Icon(Icons.home),
-              ),
-              Tab(
-                icon: Icon(Icons.search),
-              ),
-              Tab(
-                icon: Icon(Icons.add_circle_outline),
-              ),
-              Tab(
-                icon: Icon(Icons.book),
-              ),
+          bottomNavigationBar: Material(
+            color: Theme.of(context).colorScheme.primary,
+            child: const TabBar(
+              tabs: <Widget>[
+                Tab(
+                  icon: Icon(Icons.home),
+                ),
+                Tab(
+                  icon: Icon(Icons.search),
+                ),
+                Tab(
+                  icon: Icon(Icons.add_circle_outline),
+                ),
+                Tab(
+                  icon: Icon(Icons.book),
+                ),
+              ],
+            ),
+          ),
+          body: const TabBarView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              //TODO: Pages go here
+              HomeTabPage(),
+              SearchTabPage(),
+              UploadTabPage(),
+              LibraryTabPage(),
             ],
           ),
-        ),
-        body: const TabBarView(
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            //TODO: Pages go here
-            HomeTabPage(),
-            SearchTabPage(),
-            UploadTabPage(),
-            LibraryTabPage(),
-          ],
         ),
       ),
     );
