@@ -50,6 +50,7 @@ class Story {
   String art; //download url for image
   //add length?
   String authorID;
+  String description;
 
   Story ({
     required this.storyID,
@@ -57,6 +58,7 @@ class Story {
     required this.downloadURL,
     required this.art,
     required this.authorID,
+    required this.description,
   });
 
   Map<String,dynamic> toJson() => {
@@ -65,6 +67,7 @@ class Story {
     'downloadURL': downloadURL,
     'art': art,
     'authorID': authorID,
+    'description': description,
   };
 
   static Story fromJson(Map<String,dynamic> json) => Story(
@@ -73,6 +76,7 @@ class Story {
     downloadURL: json['downloadURL'],
     art: json['art'],
     authorID: json['authorID'],
+    description: json['description'],
   );
 }
 

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:destudio_test/userClasses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -27,7 +29,11 @@ class UploadTabPage extends StatefulWidget {
 class _UploadTabPageState extends State<UploadTabPage> {
   PlatformFile? pickedImage;
   PlatformFile? pickedAudio;
+
   UploadTask? imageUploadTask;
+  UploadTask? audioUploadTask;
+
+
   UploadType? _uploadType = UploadType.single;
   String _stringUpload = uploadDropOptions.first;
 
@@ -44,7 +50,63 @@ class _UploadTabPageState extends State<UploadTabPage> {
     super.dispose();
   }
 
-  Future uploadAll() async {}
+  Future uploadAllSingle() async {
+    //Check if image and audio are not null
+    final isValid = singleFormKey.currentState!.validate();
+    if (!isValid) return;
+    if (pickedImage == null) {
+      Utils.showSnackBar('Please Select an Image');
+      return;
+    }
+    if (pickedAudio == null) {
+      Utils.showSnackBar('Please Select an Audio File');
+      return;
+    }
+
+    //Entire Form is Filled Out
+    //https://www.reddit.com/r/Firebase/comments/tzwtzu/should_image_names_be_unique_when_storing_in/
+    final storyID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}audio${DateTime.now().toString()}';
+    final imageID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}image${DateTime.now().toString()}';
+    print(storyID);
+    //Unique story ID
+
+    //Put image and audio up - keep track of download URLS
+    final imagePath = 'StoryImages/$imageID';
+    final imageFile = File(pickedImage!.path!);
+    final audioPath = 'Audio/$storyID';
+    final audioFile = File(pickedAudio!.path!);
+
+    final audioRef = FirebaseStorage.instance.ref().child(audioPath);
+    audioUploadTask = audioRef.putFile(audioFile);
+    final audioSnapshot = await audioUploadTask!.whenComplete(() => {});
+    final audioURL = await audioSnapshot.ref.getDownloadURL();
+    print(audioURL);
+
+    final imageRef = FirebaseStorage.instance.ref().child(imagePath);
+    imageUploadTask = imageRef.putFile(imageFile);
+    final imageSnapshot = await imageUploadTask!.whenComplete(() => {});
+    final imageURL = await imageSnapshot.ref.getDownloadURL();
+    print(imageURL);
+
+    //Parse tags
+    List<String> tagList = [];
+
+    final parsedTags = tagController.text.split(',');
+    //Trim each thing and lowercase
+    //print(parsedTags);
+    for (var i = 0; i < parsedTags.length; i++) {
+      var tag = parsedTags[i].trim().toLowerCase();
+      //print(tag);
+      tagList.add(tag);
+    }
+    //print(tagList);
+    
+    
+    //Prep for putting to firebase
+    final uploadStoryFirebase = Story(storyID: storyID,storyName: titleController.text.trim(),downloadURL: audioURL, art: imageURL,authorID: FirebaseAuth.instance.currentUser!.uid,description: descriptionController.text.trim());
+    final storyJsonUpload = FirebaseFirestore.instance.collection('Stories').doc(storyID);
+    storyJsonUpload.set(uploadStoryFirebase.toJson());
+  }
 
   Future pickImage() async {
     final userImage = await FilePicker.platform.pickFiles(type: FileType.image);
@@ -75,7 +137,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
             padding: const EdgeInsets.all(16),
             child: TextFormField(
               controller: titleController,
-              textInputAction: TextInputAction.next,
+              textInputAction: TextInputAction.done,
               decoration: const InputDecoration(labelText: 'Title'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
@@ -144,7 +206,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
             height: 15,
           ),
           ElevatedButton(
-            onPressed: () => {}, //TODO: Do form validation
+            onPressed: uploadAllSingle, //TODO: Do form validation
             child: const Text('Publish Story'),
           )
         ],
