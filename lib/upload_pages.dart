@@ -33,7 +33,6 @@ class _UploadTabPageState extends State<UploadTabPage> {
   UploadTask? imageUploadTask;
   UploadTask? audioUploadTask;
 
-
   UploadType? _uploadType = UploadType.single;
   String _stringUpload = uploadDropOptions.first;
 
@@ -65,8 +64,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
     //Entire Form is Filled Out
     //https://www.reddit.com/r/Firebase/comments/tzwtzu/should_image_names_be_unique_when_storing_in/
-    final storyID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}audio${DateTime.now().toString()}';
-    final imageID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}image${DateTime.now().toString()}';
+    final storyID =
+        '${FirebaseAuth.instance.currentUser!.uid!.toString()}audio${DateTime.now().toString()}';
+    final imageID =
+        '${FirebaseAuth.instance.currentUser!.uid!.toString()}image${DateTime.now().toString()}';
     print(storyID);
     //Unique story ID
 
@@ -100,11 +101,18 @@ class _UploadTabPageState extends State<UploadTabPage> {
       tagList.add(tag);
     }
     //print(tagList);
-    
-    
+
     //Prep for putting to firebase
-    final uploadStoryFirebase = Story(storyID: storyID,storyName: titleController.text.trim(),downloadURL: audioURL, art: imageURL,authorID: FirebaseAuth.instance.currentUser!.uid,description: descriptionController.text.trim());
-    final storyJsonUpload = FirebaseFirestore.instance.collection('Stories').doc(storyID);
+    final uploadStoryFirebase = Story(
+        storyID: storyID,
+        storyName: titleController.text.trim(),
+        downloadURL: audioURL,
+        art: imageURL,
+        authorID: FirebaseAuth.instance.currentUser!.uid,
+        description: descriptionController.text.trim(),
+        tags: tagList);
+    final storyJsonUpload =
+        FirebaseFirestore.instance.collection('Stories').doc(storyID);
     storyJsonUpload.set(uploadStoryFirebase.toJson());
   }
 

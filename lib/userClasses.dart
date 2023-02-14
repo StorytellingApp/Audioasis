@@ -51,6 +51,7 @@ class Story {
   //add length?
   String authorID;
   String description;
+  List<String> tags;
 
   Story ({
     required this.storyID,
@@ -59,6 +60,7 @@ class Story {
     required this.art,
     required this.authorID,
     required this.description,
+    required this.tags,
   });
 
   Map<String,dynamic> toJson() => {
@@ -68,6 +70,7 @@ class Story {
     'art': art,
     'authorID': authorID,
     'description': description,
+    'tags': tags,
   };
 
   static Story fromJson(Map<String,dynamic> json) => Story(
@@ -77,6 +80,7 @@ class Story {
     art: json['art'],
     authorID: json['authorID'],
     description: json['description'],
+    tags: json['tags'], //TODO: Is this right?
   );
 }
 

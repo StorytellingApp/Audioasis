@@ -16,8 +16,28 @@ class SearchTabPage extends StatefulWidget {
 }
 
 class _SearchTabPageState extends State<SearchTabPage> {
+  final searchController = TextEditingController();
+  final searchKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   Future signOut() async {
     FirebaseAuth.instance.signOut();
+  }
+
+  void searchQuery() {
+    final isValid = searchKey.currentState!.validate();
+    if (!isValid) return;
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+            SearchResults(searchQuery: searchController.text) //Works
+        ));
   }
 
   @override
@@ -26,10 +46,48 @@ class _SearchTabPageState extends State<SearchTabPage> {
       appBar: AppBar(
         title: const Text('Search'),
       ),
-      body: ElevatedButton(
-        onPressed: signOut,
-        child: const Text('Logout'),
+      body: Form(
+        key: searchKey,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: TextFormField(
+                  controller: searchController,
+                  decoration: const InputDecoration(labelText: 'Search'),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => value != null && value.isEmpty ? 'Enter a Search Term' : null,
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: searchQuery,
+                  child: const Text('Search'))
+            ],
+          ),
+        ),
       ),
+    );
+  }
+}
+
+//Displays the actual results
+class SearchResults extends StatefulWidget {
+  final String searchQuery;
+
+  const SearchResults({Key? key, required this.searchQuery}) : super(key: key);
+
+  @override
+  State<SearchResults> createState() => _SearchResultsState();
+}
+
+class _SearchResultsState extends State<SearchResults> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Text(widget.searchQuery),
     );
   }
 }
