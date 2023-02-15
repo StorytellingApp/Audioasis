@@ -35,7 +35,7 @@ class _SearchTabPageState extends State<SearchTabPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search'),
+        title: const Text('Search Stories'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
