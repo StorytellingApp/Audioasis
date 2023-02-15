@@ -63,7 +63,7 @@ class _SearchTabPageState extends State<SearchTabPage> {
                         var data = snapshots.data!.docs[index].data() as Map<String, dynamic>;
 
                         if (data['storyName'].toString().trim().toLowerCase().startsWith(storyName.trim().toLowerCase())){
-                          return ListTile(
+                          return ListTile( //TODO: add support for tapping
                             title: Text(data['storyName'], maxLines: 1, overflow: TextOverflow.ellipsis,),
                             subtitle: Text(data['description'],maxLines: 1,overflow: TextOverflow.ellipsis,),
                           );
