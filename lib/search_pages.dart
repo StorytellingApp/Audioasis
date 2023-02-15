@@ -37,26 +37,47 @@ class _SearchTabPageState extends State<SearchTabPage> {
       appBar: AppBar(
         title: const Text('Search'),
       ),
-      body: Form(
-        key: searchKey,
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              TextField(
+                controller: searchController,
+                decoration: const InputDecoration(labelText: 'Search'),
+                onChanged: (val) {
+                  setState(() {
+                    storyName = val;
+                  });
+                },
+              ),
+              
               Container(
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  controller: searchController,
-                  decoration: const InputDecoration(labelText: 'Search'),
+                height: 200,
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance.collection('Stories').snapshots(),
+                  builder: (context,snapshots) {
+                    return(snapshots.connectionState == ConnectionState.waiting)? Center(child: CircularProgressIndicator(),)
+                        : ListView.builder(
+                      itemCount: snapshots.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        var data = snapshots.data!.docs[index].data() as Map<String, dynamic>;
+
+                        if (data['storyName'].toString().trim().toLowerCase().startsWith(storyName.trim().toLowerCase())){
+                          return ListTile(
+                            title: Text(data['storyName'], maxLines: 1, overflow: TextOverflow.ellipsis,),
+                            subtitle: Text(data['description'],maxLines: 1,overflow: TextOverflow.ellipsis,),
+                          );
+                        }
+                        return Container();
+                      },
+                    );
+                  },
                 ),
               ),
-
-
-
             ],
           ),
         ),
-      ),
+      )
     );
   }
 }
