@@ -39,83 +39,91 @@ class _SignUpWidgetState extends State<SignUpWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: TextFormField(
-                  controller: userNameController,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (email) =>
-                      email != null && !EmailValidator.validate(email)
-                          ? 'Enter a valid email'
-                          : null,
+    return MaterialApp(
+        home: Scaffold(
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                      child: TextFormField(
+
+
+                        controller: userNameController,
+                        textInputAction: TextInputAction.next,
+                        decoration: const InputDecoration(labelText: 'Email'),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (email) =>
+                            email != null && !EmailValidator.validate(email)
+                                ? 'Enter a valid email'
+                                : null,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                      child: TextFormField(
+                        controller: passwordController,
+                        textInputAction: TextInputAction.next,
+                        decoration: const InputDecoration(labelText: 'Password'),
+                        obscureText: true,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) => value != null && value.length < 6
+                            ? 'Enter 6 characters minimum'
+                            : null,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                      child: TextFormField(
+                        controller: firstNameController,
+                        textInputAction: TextInputAction.next,
+                        decoration: const InputDecoration(labelText: 'First Name'),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) =>
+                            value != null && value.isEmpty ? 'Enter a Name' : null,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
+                      child: TextFormField(
+                        controller: lastNameController,
+                        textInputAction: TextInputAction.done,
+                        decoration: const InputDecoration(labelText: 'Last Name'),
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (value) =>
+                            value != null && value.isEmpty ? 'Enter a Name' : null,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: signIn,
+                      child: const Text('Sign Up'),
+                    ),
+                    RichText(
+                      text: TextSpan(
+                          style: const TextStyle(color: Colors.black, fontSize: 16),
+                          text: 'Already have an account?   ',
+                          children: [
+                            TextSpan(
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = widget.onCLickedSignUp,
+                                text: 'Log In',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Theme.of(context).colorScheme.secondary,
+                                ))
+                          ]),
+                    )
+                  ],
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: TextFormField(
-                  controller: passwordController,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) => value != null && value.length < 6
-                      ? 'Enter 6 characters minimum'
-                      : null,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: TextFormField(
-                  controller: firstNameController,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(labelText: 'First Name'),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) =>
-                      value != null && value.isEmpty ? 'Enter a Name' : null,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: TextFormField(
-                  controller: lastNameController,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(labelText: 'Last Name'),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) =>
-                      value != null && value.isEmpty ? 'Enter a Name' : null,
-                ),
-              ),
-              TextButton(
-                onPressed: signIn,
-                child: const Text('Sign Up'),
-              ),
-              RichText(
-                text: TextSpan(
-                    style: const TextStyle(color: Colors.black, fontSize: 16),
-                    text: 'Already have an account?   ',
-                    children: [
-                      TextSpan(
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = widget.onCLickedSignUp,
-                          text: 'Log In',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ))
-                    ]),
-              )
-            ],
+              )),
           ),
-        ));
+        ),
+      );
   }
 
   Future signIn() async {

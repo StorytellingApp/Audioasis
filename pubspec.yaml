@@ -70,6 +70,7 @@ flutter:
   assets:
     - images/Classy-Logo-AO.jpg
     - images/NoImageDefault.jpg
+    - images/UserProfilePic.jpg
 
   #   - images/a_dot_ham.jpeg
 

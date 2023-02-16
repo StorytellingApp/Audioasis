@@ -47,20 +47,29 @@ class _LoginWidgetState extends State<LoginWidget> {
               ),
               Card(
                 margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.email,
-                    color: Colors.blueGrey,
-                  ),
-                  title: TextField(
-                    controller: userNameController,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                        labelText: 'Email'
+                child: Row(
+                  children: [
+                    Spacer(
+                      flex: 1,
                     ),
-                  ),
+                    Icon(
+                      Icons.email,
+                      color: Colors.blueGrey,
+                    ),
+                    TextField(
+                      controller: userNameController,
+                      textInputAction: TextInputAction.next,
+                      decoration: const InputDecoration(
+                          labelText: 'Email'
+                      ),
+                    ),
+                    Spacer(
+                      flex: 1,
+                    ),
+                  ], //children
                 ),
               ),
+              
               Card(
                 margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
                 child: ListTile(
