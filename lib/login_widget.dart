@@ -45,37 +45,27 @@ class _LoginWidgetState extends State<LoginWidget> {
               const SizedBox(
                 height: 40.0,
               ),
-              Card(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.email,
-                    color: Colors.blueGrey,
-                  ),
-                  title: TextField(
-                    controller: userNameController,
-                    textInputAction: TextInputAction.next,
-                    decoration: const InputDecoration(
-                        labelText: 'Email'
-                    ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: TextField(
+                  controller: userNameController,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                      labelText: 'Email',
+                    prefixIcon: Icon(Icons.email)
                   ),
                 ),
               ),
-              Card(
-                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-                child: ListTile(
-                  leading: const Icon(
-                    Icons.lock,
-                    color: Colors.blueGrey,
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: TextField(
+                  controller: passwordController,
+                  textInputAction: TextInputAction.done,
+                  decoration: const InputDecoration(
+                      labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock),
                   ),
-                  title: TextField(
-                    controller: passwordController,
-                    textInputAction: TextInputAction.done,
-                    decoration: const InputDecoration(
-                        labelText: 'Password'
-                    ),
-                    obscureText: true,
-                  ),
+                  obscureText: true,
                 ),
               ),
               GestureDetector(
