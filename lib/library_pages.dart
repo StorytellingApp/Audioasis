@@ -22,6 +22,14 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
       appBar: AppBar(
         title: const Text('Library'),
       ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(onPressed: () {
+            FirebaseAuth.instance.signOut();
+          }, child: const Text('Sign Out'))
+        ],
+      ),
     );
   }
 }
