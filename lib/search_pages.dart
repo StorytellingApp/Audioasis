@@ -136,7 +136,8 @@ class _ShowGenresState extends State<ShowGenres> {
             ),
           ],
         ),
+        //TODO: add list here
       ],
-    ); //TODO: add list of genres
+    );
   }
 }
