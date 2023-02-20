@@ -136,7 +136,7 @@ class _ShowGenresState extends State<ShowGenres> {
             ),
           ],
         ),
-        //TODO: add list here
+        //TODO: add list here - make dynamic at some point
       ],
     );
   }
