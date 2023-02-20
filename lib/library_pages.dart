@@ -25,9 +25,8 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ElevatedButton(onPressed: () {
-            FirebaseAuth.instance.signOut();
-          }, child: const Text('Sign Out'))
+          ElevatedButton(onPressed: () => FirebaseAuth.instance.signOut(),
+              child: const Text('Sign Out'))
         ],
       ),
     );
