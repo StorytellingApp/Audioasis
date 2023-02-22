@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:destudio_test/searchCards.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -34,19 +35,31 @@ class _SearchTabPageState extends State<SearchTabPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Search Stories'),
-        ),
         body: SafeArea(
           child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
             child: Column(
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:  const [
+                  Text(
+                  'Search',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.normal
+                  ),
+                  ),
+                  ], //children
+                ),
                 Container(
                   padding: const EdgeInsets.all(16),
                   child: TextField(
                     controller: searchController,
                     decoration: const InputDecoration(
-                        labelText: 'Search', prefixIcon: Icon(Icons.search)),
+                        labelText: 'Search for Authors, Stories, Playlist', prefixIcon: Icon(Icons.search)),
                     onChanged: (val) {
                       setState(() {
                         storyName = val;
@@ -127,8 +140,15 @@ class _ShowGenresState extends State<ShowGenres> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              padding: EdgeInsets.all(16),
-              child: const Text("Discover"),
+              padding: const EdgeInsets.all(16),
+              child: const Text(
+                  "Discover",
+                style: TextStyle(
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.black,
+                 ),
+              ),
             ),
             Container(
               padding: EdgeInsets.all(16),
@@ -136,8 +156,10 @@ class _ShowGenresState extends State<ShowGenres> {
             ),
           ],
         ),
+
         //TODO: add list here
       ],
     );
   }
 }
+
