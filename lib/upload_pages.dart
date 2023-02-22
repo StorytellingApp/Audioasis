@@ -30,6 +30,9 @@ class _UploadTabPageState extends State<UploadTabPage> {
   PlatformFile? pickedImage;
   PlatformFile? pickedAudio;
 
+  PlatformFile? seriesPickedImage;
+  PlatformFile? seriesPickedAudio;
+
   UploadTask? imageUploadTask;
   UploadTask? audioUploadTask;
 
@@ -269,6 +272,16 @@ class _UploadTabPageState extends State<UploadTabPage> {
             height: 10,
           ),
           const Text('Audio: Upload mp3 or WAV'),
+          if (seriesPickedAudio != null)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text('Audio Chosen'),
+                SizedBox(
+                  height: 50,
+                ),
+              ],
+            ),
         ],
       ),
     );
