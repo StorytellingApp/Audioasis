@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
                   icon: Icon(Icons.search),
                 ),
                 Tab(
-                  icon: Icon(Icons.add_circle_outline),
+                  icon: Icon(Icons.file_upload_outlined),
                 ),
                 Tab(
                   icon: Icon(Icons.book),
