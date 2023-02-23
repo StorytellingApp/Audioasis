@@ -128,23 +128,27 @@ class AppUser {
 class Series {
   String seriesID;
   String authorID;
-  String numOfStories; //add setter and getter and increment and decrement function
+  int numOfStories; //add setter and getter and increment and decrement function
+  List<String> stories;
 
   Series({
     required this.seriesID,
     required this.authorID,
     required this.numOfStories,
+    required this.stories,
   });
 
   Map<String,dynamic> toJson() =>{
     'seriesID':seriesID,
     'authorID':authorID,
     'numOfStories':numOfStories,
+    'stories': stories,
   };
 
   static Series fromJson(Map<String,dynamic> json) => Series(
     seriesID: json['seriesID'],
     authorID: json['authorID'],
     numOfStories: json['numOfStories'],
+    stories: json['stories'],
   );
 }

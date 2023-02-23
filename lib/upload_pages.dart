@@ -17,7 +17,10 @@ import 'dart:io';
 
 enum UploadType { single, chapter }
 
+enum ChapterFirstOrNot { firstChapter, notFirstChapter }
+
 const List<String> uploadDropOptions = ['Single', 'Series'];
+const List<String> seriesDropOptions = ['Yes', 'No'];
 
 class UploadTabPage extends StatefulWidget {
   const UploadTabPage({Key? key}) : super(key: key);
@@ -31,13 +34,15 @@ class _UploadTabPageState extends State<UploadTabPage> {
   PlatformFile? pickedAudio;
 
   PlatformFile? seriesPickedImage;
-  PlatformFile? seriesPickedAudio;
+  PlatformFile? seriesFirstPickedAudio;
+  PlatformFile? seriesLaterPickedAudio;
 
   UploadTask? imageUploadTask;
   UploadTask? audioUploadTask;
 
   UploadType? _uploadType = UploadType.single;
   String _stringUpload = uploadDropOptions.first;
+  String _seriesType = seriesDropOptions.first;
 
   final singleFormKey = GlobalKey<FormState>();
   final chapterFormKey = GlobalKey<FormState>();
@@ -48,7 +53,9 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
   final seriesTitleController = TextEditingController();
   final seriesDescriptionController = TextEditingController();
-  final seriesTageController = TextEditingController();
+  final seriesTagController = TextEditingController();
+
+  final seriesNameController = TextEditingController();
 
   @override
   void dispose() {
@@ -58,7 +65,8 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
     seriesTitleController.dispose();
     seriesDescriptionController.dispose();
-    seriesTageController.dispose();
+    seriesTagController.dispose();
+    seriesNameController.dispose();
 
     super.dispose();
   }
@@ -118,20 +126,95 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
     //Prep for putting to firebase
     final uploadStoryFirebase = Story(
-        storyID: storyID,
-        storyName: titleController.text.trim(),
-        downloadURL: audioURL,
-        art: imageURL,
-        authorID: FirebaseAuth.instance.currentUser!.uid,
-        description: descriptionController.text.trim(),
-        tags: tagList,
-        series: false,
-        seriesID: '',
-        seriesPosition: -1,
+      storyID: storyID,
+      storyName: titleController.text.trim(),
+      downloadURL: audioURL,
+      art: imageURL,
+      authorID: FirebaseAuth.instance.currentUser!.uid,
+      description: descriptionController.text.trim(),
+      tags: tagList,
+      series: false,
+      seriesID: '',
+      seriesPosition: -1,
     );
     final storyJsonUpload =
         FirebaseFirestore.instance.collection('Stories').doc(storyID);
     storyJsonUpload.set(uploadStoryFirebase.toJson());
+  }
+
+  Future uploadAllFirstSeries() async {
+    final isValid = chapterFormKey.currentState!.validate();
+    if (!isValid) return;
+    if (pickedImage == null){
+      Utils.showSnackBar('Please Select an Image');
+      return;
+    }
+    if (pickedAudio == null) {
+      Utils.showSnackBar('Please Select an Audio File');
+      return;
+    }
+
+    //Enitre form is filled out
+    final storyID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}audio${DateTime.now().toString()}';
+    final imageID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}image${DateTime.now().toString()}';
+
+    final imagePath = 'StoryImages/$imageID';
+    final imageFile = File(pickedImage!.path!);
+    final audioPath = 'Audio/$storyID';
+    final audioFile = File(pickedAudio!.path!);
+
+    final audioRef = FirebaseStorage.instance.ref().child(audioPath);
+    audioUploadTask = audioRef.putFile(audioFile);
+    final audioSnapshot = await audioUploadTask!.whenComplete(() => null);
+    final audioURL = await audioSnapshot.ref.getDownloadURL();
+    print(audioURL);
+
+    final imageRef = FirebaseStorage.instance.ref().child(imagePath);
+    imageUploadTask = imageRef.putFile(imageFile);
+    final imageSnapshot = await imageUploadTask!.whenComplete(() => null);
+    final imageURL = await imageSnapshot.ref.getDownloadURL();
+    print(imageURL);
+
+    //parse tags
+    List<String> tagList = [];
+
+    final parsedTags = seriesTagController.text.split(',');
+    for (var i = 0; i < parsedTags.length; i++){
+      var tag = parsedTags[i].trim().toLowerCase();
+      tagList.add(tag);
+    }
+
+    final seriesID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}playlist${DateTime.now().toString()}';
+
+
+    //prep for putting to firebase - both playlist and story
+    List<String> stories = [storyID];
+    final uploadSeries = Series(
+        seriesID: seriesID,
+        authorID: FirebaseAuth.instance.currentUser!.uid!.toString(),
+        numOfStories: 1,
+      stories: stories,
+    );
+
+    final uploadStory = Story(
+      storyID: storyID,
+      storyName: seriesTitleController.text.trim(),
+      downloadURL: audioURL,
+      art: imageURL,
+      authorID: FirebaseAuth.instance.currentUser!.uid,
+      description: seriesDescriptionController.text.trim(),
+      tags: tagList,
+      series: true,
+      seriesID: seriesID,
+      seriesPosition: 1,
+    );
+    
+    final storyJsonUpload = FirebaseFirestore.instance.collection('Stories').doc(storyID);
+    storyJsonUpload.set(uploadStory.toJson());
+    
+    final seriesJsonUpload = FirebaseFirestore.instance.collection('Playlists').doc(seriesID);
+    seriesJsonUpload.set(uploadSeries.toJson());
+    
   }
 
   Future pickImage() async {
@@ -151,6 +234,103 @@ class _UploadTabPageState extends State<UploadTabPage> {
     setState(() {
       pickedAudio = userAudio.files.first;
     });
+  }
+
+  Widget firstChapter() {
+    return Form(
+      key: chapterFormKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: seriesNameController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(labelText: 'Series Name'),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+              value != null && value.isEmpty ? 'Enter a Series Name' : null,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: seriesTitleController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(labelText: 'Chapter Name'),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+              value != null && value.isEmpty ? 'Enter a Name' : null,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: seriesDescriptionController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(labelText: 'Story Description'),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+              value != null && value.isEmpty ? 'Enter a Description' : null,
+            ),
+          ),
+          if (pickedAudio != null)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text('Audio Chosen'),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          Row(
+            children: [
+              const Spacer(
+                flex: 1,
+              ),
+              ElevatedButton(
+                  onPressed: pickAudio,
+                  child: Row(
+                    children: const [
+                      Text('Upload Audio '),
+                      Icon(Icons.upload),
+                    ],
+                  )),
+              const Spacer(
+                flex: 1,
+              ),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: seriesTagController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(
+                  labelText: 'Tags (Comma Separated)'
+              ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+              value != null && value.isEmpty ? 'Enter Tags' : null,
+            ),
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          ElevatedButton(
+            onPressed: uploadAllFirstSeries, //TODO: Do form validation
+            child: const Text('Publish Story'),
+          ),
+        ],
+      ),
+    );
+
+  }
+
+  Widget laterChapter() {
+    return Placeholder();
   }
 
   Widget singleStory() {
@@ -234,56 +414,49 @@ class _UploadTabPageState extends State<UploadTabPage> {
           ElevatedButton(
             onPressed: uploadAllSingle, //TODO: Do form validation
             child: const Text('Publish Story'),
-          )
+          ),
         ],
       ),
     );
   }
 
   Widget chapterStory() {
-    return Form(
-      key: chapterFormKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: TextFormField(
-              controller: seriesTitleController,
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(labelText: 'Title'),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) =>
-                value != null && value.isEmpty ? 'Enter a Name' : null,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('First Chapter'),
+            const SizedBox(
+              width: 25,
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16),
-            child: TextFormField(
-              controller: seriesDescriptionController,
-              textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(labelText: 'Description'),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) =>
-                value != null && value.isEmpty ? 'Enter a Description' : null,
+            DropdownButton<String>(
+              value: _seriesType,
+              elevation: 16,
+              underline: Container(
+                height: 2,
+              ),
+              onChanged: (String? value) {
+                setState(() {
+                  _seriesType = value!;
+                });
+              },
+              items: seriesDropOptions
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          const Text('Audio: Upload mp3 or WAV'),
-          if (seriesPickedAudio != null)
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text('Audio Chosen'),
-                SizedBox(
-                  height: 50,
-                ),
-              ],
-            ),
-        ],
-      ),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        (_seriesType == 'Yes') ? firstChapter() : laterChapter(),
+      ],
     );
   }
 
@@ -428,3 +601,50 @@ class _UploadAudioState extends State<UploadAudio> {
 }
 
 */
+
+/*
+return Form(
+      key: chapterFormKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: seriesTitleController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(labelText: 'Title'),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+                value != null && value.isEmpty ? 'Enter a Name' : null,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            child: TextFormField(
+              controller: seriesDescriptionController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(labelText: 'Description'),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) =>
+                value != null && value.isEmpty ? 'Enter a Description' : null,
+            ),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const Text('Audio: Upload mp3 or WAV'),
+          if (seriesPickedAudio != null)
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text('Audio Chosen'),
+                SizedBox(
+                  height: 50,
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+ */
