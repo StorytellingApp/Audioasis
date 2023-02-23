@@ -135,7 +135,6 @@ class _UploadTabPageState extends State<UploadTabPage> {
       tags: tagList,
       series: false,
       seriesID: '',
-      seriesPosition: -1,
     );
     final storyJsonUpload =
         FirebaseFirestore.instance.collection('Stories').doc(storyID);
@@ -192,7 +191,6 @@ class _UploadTabPageState extends State<UploadTabPage> {
     final uploadSeries = Series(
         seriesID: seriesID,
         authorID: FirebaseAuth.instance.currentUser!.uid!.toString(),
-        numOfStories: 1,
       stories: stories,
     );
 
@@ -206,7 +204,6 @@ class _UploadTabPageState extends State<UploadTabPage> {
       tags: tagList,
       series: true,
       seriesID: seriesID,
-      seriesPosition: 1,
     );
     
     final storyJsonUpload = FirebaseFirestore.instance.collection('Stories').doc(storyID);
