@@ -192,6 +192,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
         seriesID: seriesID,
         authorID: FirebaseAuth.instance.currentUser!.uid!.toString(),
       stories: stories,
+      seriesName: seriesTitleController.text.trim(),
     );
 
     final uploadStory = Story(
@@ -327,7 +328,14 @@ class _UploadTabPageState extends State<UploadTabPage> {
   }
 
   Widget laterChapter() {
-    return Placeholder();
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Uploaded Series:'),
+
+      ],
+    );
+
   }
 
   Widget singleStory() {

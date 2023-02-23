@@ -125,22 +125,27 @@ class Series {
   String seriesID;
   String authorID;
   List<String> stories;
+  String seriesName;
 
   Series({
     required this.seriesID,
     required this.authorID,
     required this.stories,
+    required this.seriesName,
   });
 
   Map<String,dynamic> toJson() =>{
     'seriesID':seriesID,
     'authorID':authorID,
     'stories': stories,
+    'seriesName': seriesName
   };
 
   static Series fromJson(Map<String,dynamic> json) => Series(
     seriesID: json['seriesID'],
     authorID: json['authorID'],
     stories: json['stories'],
+    seriesName: json['seriesName'],
   );
 }
+
