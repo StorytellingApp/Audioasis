@@ -2,11 +2,11 @@
 
 Audioasis is a short story platform where anyone can upload a narrated short story.
 
-##Key People
+## Key People
 - Kelly Keiser, Sponsor
 - Destudio, Initial Team
 
-##Key Dates
+## Key Dates
 09/2022 - Present
 - Initial Requirements
 - Initial App Development
