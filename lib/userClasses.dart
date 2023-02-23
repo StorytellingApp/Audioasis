@@ -54,7 +54,6 @@ class Story {
   List<String> tags;
   bool series; //True if part of series, False if not
   String seriesID; //Empty String if not part of series
-  int seriesPosition; //The position in a series, -1 if not
 
   Story ({
     required this.storyID,
@@ -66,7 +65,6 @@ class Story {
     required this.tags,
     required this.series,
     required this.seriesID,
-    required this.seriesPosition,
   });
 
   Map<String,dynamic> toJson() => {
@@ -79,7 +77,6 @@ class Story {
     'tags': tags,
     'series':series,
     'seriesID':seriesID,
-    'seriesPosition':seriesPosition,
   };
 
   static Story fromJson(Map<String,dynamic> json) => Story(
@@ -92,7 +89,6 @@ class Story {
     tags: json['tags'], //TODO: Is this right?
     series: json['series'],
     seriesID: json['seriesID'],
-    seriesPosition: json['seriesPosition'],
   );
 }
 
@@ -128,27 +124,23 @@ class AppUser {
 class Series {
   String seriesID;
   String authorID;
-  int numOfStories; //add setter and getter and increment and decrement function
   List<String> stories;
 
   Series({
     required this.seriesID,
     required this.authorID,
-    required this.numOfStories,
     required this.stories,
   });
 
   Map<String,dynamic> toJson() =>{
     'seriesID':seriesID,
     'authorID':authorID,
-    'numOfStories':numOfStories,
     'stories': stories,
   };
 
   static Series fromJson(Map<String,dynamic> json) => Series(
     seriesID: json['seriesID'],
     authorID: json['authorID'],
-    numOfStories: json['numOfStories'],
     stories: json['stories'],
   );
 }
