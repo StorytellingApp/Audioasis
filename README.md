@@ -1,6 +1,15 @@
-# destudio_test
+# Audioasis
 
-A new Flutter project.
+Audioasis is a short story platform where anyone can upload a narrated short story.
+
+##Key People
+- Kelly Keiser, Sponsor
+- Destudio, Initial Team
+
+##Key Dates
+09/2022 - Present
+- Initial Requirements
+- Initial App Development
 
 ## Getting Started
 
