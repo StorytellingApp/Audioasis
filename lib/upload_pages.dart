@@ -40,9 +40,14 @@ class _UploadTabPageState extends State<UploadTabPage> {
   UploadTask? imageUploadTask;
   UploadTask? audioUploadTask;
 
+  //For the selected series
+  //var selectedSeries = '';
+
   UploadType? _uploadType = UploadType.single;
   String _stringUpload = uploadDropOptions.first;
   String _seriesType = seriesDropOptions.first;
+
+  String _series = 'Test';
 
   final singleFormKey = GlobalKey<FormState>();
   final chapterFormKey = GlobalKey<FormState>();
@@ -144,7 +149,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
   Future uploadAllFirstSeries() async {
     final isValid = chapterFormKey.currentState!.validate();
     if (!isValid) return;
-    if (pickedImage == null){
+    if (pickedImage == null) {
       Utils.showSnackBar('Please Select an Image');
       return;
     }
@@ -154,8 +159,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
     }
 
     //Enitre form is filled out
-    final storyID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}audio${DateTime.now().toString()}';
-    final imageID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}image${DateTime.now().toString()}';
+    final storyID =
+        '${FirebaseAuth.instance.currentUser!.uid!.toString()}audio${DateTime.now().toString()}';
+    final imageID =
+        '${FirebaseAuth.instance.currentUser!.uid!.toString()}image${DateTime.now().toString()}';
 
     final imagePath = 'StoryImages/$imageID';
     final imageFile = File(pickedImage!.path!);
@@ -178,19 +185,19 @@ class _UploadTabPageState extends State<UploadTabPage> {
     List<String> tagList = [];
 
     final parsedTags = seriesTagController.text.split(',');
-    for (var i = 0; i < parsedTags.length; i++){
+    for (var i = 0; i < parsedTags.length; i++) {
       var tag = parsedTags[i].trim().toLowerCase();
       tagList.add(tag);
     }
 
-    final seriesID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}playlist${DateTime.now().toString()}';
-
+    final seriesID =
+        '${FirebaseAuth.instance.currentUser!.uid!.toString()}series${DateTime.now().toString()}';
 
     //prep for putting to firebase - both playlist and story
     List<String> stories = [storyID];
     final uploadSeries = Series(
-        seriesID: seriesID,
-        authorID: FirebaseAuth.instance.currentUser!.uid!.toString(),
+      seriesID: seriesID,
+      authorID: FirebaseAuth.instance.currentUser!.uid!.toString(),
       stories: stories,
       seriesName: seriesTitleController.text.trim(),
     );
@@ -206,13 +213,14 @@ class _UploadTabPageState extends State<UploadTabPage> {
       series: true,
       seriesID: seriesID,
     );
-    
-    final storyJsonUpload = FirebaseFirestore.instance.collection('Stories').doc(storyID);
+
+    final storyJsonUpload =
+        FirebaseFirestore.instance.collection('Stories').doc(storyID);
     storyJsonUpload.set(uploadStory.toJson());
-    
-    final seriesJsonUpload = FirebaseFirestore.instance.collection('Playlists').doc(seriesID);
+
+    final seriesJsonUpload =
+        FirebaseFirestore.instance.collection('Series').doc(seriesID);
     seriesJsonUpload.set(uploadSeries.toJson());
-    
   }
 
   Future pickImage() async {
@@ -248,7 +256,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Series Name'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter a Series Name' : null,
+                  value != null && value.isEmpty ? 'Enter a Series Name' : null,
             ),
           ),
           Container(
@@ -259,7 +267,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Chapter Name'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter a Name' : null,
+                  value != null && value.isEmpty ? 'Enter a Name' : null,
             ),
           ),
           Container(
@@ -270,7 +278,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Story Description'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter a Description' : null,
+                  value != null && value.isEmpty ? 'Enter a Description' : null,
             ),
           ),
           if (pickedAudio != null)
@@ -306,12 +314,11 @@ class _UploadTabPageState extends State<UploadTabPage> {
             child: TextFormField(
               controller: seriesTagController,
               textInputAction: TextInputAction.done,
-              decoration: const InputDecoration(
-                  labelText: 'Tags (Comma Separated)'
-              ),
+              decoration:
+                  const InputDecoration(labelText: 'Tags (Comma Separated)'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter Tags' : null,
+                  value != null && value.isEmpty ? 'Enter Tags' : null,
             ),
           ),
           const SizedBox(
@@ -324,18 +331,83 @@ class _UploadTabPageState extends State<UploadTabPage> {
         ],
       ),
     );
-
   }
 
   Widget laterChapter() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Uploaded Series:'),
+//https://stackoverflow.com/questions/49764905/how-to-assign-future-to-widget-in-flutter
+  //https://stackoverflow.com/questions/56249715/futurebuilder-doesnt-wait-for-future-to-complete
+  List<String> initialDataStuff = [];
+    return FutureBuilder(
+      future: getItems(),
+      initialData: initialDataStuff,
+      builder: (BuildContext context, AsyncSnapshot<List<String>> authorSeries) {
+        if (authorSeries.hasData && !authorSeries.hasError) {
+          if (authorSeries.data!.isEmpty){
+            return const Text('No Series Found');
+            //Either loading data or none found
+          }else{
+            //TODO: Do rest of upload page here - dropdown menu as well
 
-      ],
+            String _dropDownSeries = authorSeries.data!.first;
+
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //Text(authorSeries.data!.first.toString()),
+                DropdownButton<String>(
+                  value: _dropDownSeries,
+                  isExpanded: true, //https://stackoverflow.com/questions/54069869/how-to-solve-a-renderflex-overflowed-by-143-pixels-on-the-right-error-in-text
+                  elevation: 16,
+                  underline: Container(height: 2,),
+                  onChanged: (String? value) {
+                    setState(() {
+                      _dropDownSeries = value!;
+                    });
+                  },
+                  items: authorSeries.data!
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      //https://stackoverflow.com/questions/51930754/flutter-wrapping-text
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        child: Text(value,overflow: TextOverflow.ellipsis),
+                      ),
+
+
+                    );
+                  }).toList(),
+                ),
+              ],
+            );
+          }
+        }else{
+          return const Center(child: CircularProgressIndicator(),);
+        }
+
+      },
     );
+  }
 
+  Future<List<String>> getItems() async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('Series')
+        .where('authorID',
+            isEqualTo: FirebaseAuth.instance.currentUser!.uid.toString())
+        .get();
+    final List<DocumentSnapshot> documents = result.docs;
+
+    List<String> authorSeries = [];
+    documents.forEach((element) {
+      authorSeries.add(element.id.toString());
+    });
+    print(authorSeries);
+    //Correctly gets the stuff - check if empty - say only no series found
+
+    return authorSeries;
+
+    //TODO: build list
   }
 
   Widget singleStory() {
