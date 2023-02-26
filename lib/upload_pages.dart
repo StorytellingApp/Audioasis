@@ -142,7 +142,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
       seriesID: '',
     );
     final storyJsonUpload =
-        FirebaseFirestore.instance.collection('Stories').doc(storyID);
+    FirebaseFirestore.instance.collection('Stories').doc(storyID);
     storyJsonUpload.set(uploadStoryFirebase.toJson());
   }
 
@@ -215,11 +215,11 @@ class _UploadTabPageState extends State<UploadTabPage> {
     );
 
     final storyJsonUpload =
-        FirebaseFirestore.instance.collection('Stories').doc(storyID);
+    FirebaseFirestore.instance.collection('Stories').doc(storyID);
     storyJsonUpload.set(uploadStory.toJson());
 
     final seriesJsonUpload =
-        FirebaseFirestore.instance.collection('Series').doc(seriesID);
+    FirebaseFirestore.instance.collection('Series').doc(seriesID);
     seriesJsonUpload.set(uploadSeries.toJson());
   }
 
@@ -256,7 +256,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Series Name'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter a Series Name' : null,
+              value != null && value.isEmpty ? 'Enter a Series Name' : null,
             ),
           ),
           Container(
@@ -267,7 +267,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Chapter Name'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter a Name' : null,
+              value != null && value.isEmpty ? 'Enter a Name' : null,
             ),
           ),
           Container(
@@ -278,7 +278,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Story Description'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter a Description' : null,
+              value != null && value.isEmpty ? 'Enter a Description' : null,
             ),
           ),
           if (pickedAudio != null)
@@ -315,10 +315,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
               controller: seriesTagController,
               textInputAction: TextInputAction.done,
               decoration:
-                  const InputDecoration(labelText: 'Tags (Comma Separated)'),
+              const InputDecoration(labelText: 'Tags (Comma Separated)'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter Tags' : null,
+              value != null && value.isEmpty ? 'Enter Tags' : null,
             ),
           ),
           const SizedBox(
@@ -335,8 +335,8 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
   Widget laterChapter() {
 //https://stackoverflow.com/questions/49764905/how-to-assign-future-to-widget-in-flutter
-  //https://stackoverflow.com/questions/56249715/futurebuilder-doesnt-wait-for-future-to-complete
-  List<String> initialDataStuff = [];
+    //https://stackoverflow.com/questions/56249715/futurebuilder-doesnt-wait-for-future-to-complete
+    List<String> initialDataStuff = [];
     return FutureBuilder(
       future: getItems(),
       initialData: initialDataStuff,
@@ -347,6 +347,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
             //Either loading data or none found
           }else{
             //TODO: Do rest of upload page here - dropdown menu as well
+            //TODO: Now, only replace thing when name == what is selected - another futurebuilder to get the data?
 
             String _dropDownSeries = authorSeries.data!.first;
 
@@ -394,13 +395,13 @@ class _UploadTabPageState extends State<UploadTabPage> {
     final QuerySnapshot result = await FirebaseFirestore.instance
         .collection('Series')
         .where('authorID',
-            isEqualTo: FirebaseAuth.instance.currentUser!.uid.toString())
+        isEqualTo: FirebaseAuth.instance.currentUser!.uid.toString())
         .get();
     final List<DocumentSnapshot> documents = result.docs;
 
     List<String> authorSeries = [];
     documents.forEach((element) {
-      authorSeries.add(element.id.toString());
+      authorSeries.add(element['seriesName']);
     });
     print(authorSeries);
     //Correctly gets the stuff - check if empty - say only no series found
@@ -424,7 +425,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Title'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter a Name' : null,
+              value != null && value.isEmpty ? 'Enter a Name' : null,
             ),
           ),
           Container(
@@ -435,7 +436,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Description'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter a Description' : null,
+              value != null && value.isEmpty ? 'Enter a Description' : null,
             ),
           ),
           const SizedBox(
@@ -479,10 +480,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
               controller: tagController,
               textInputAction: TextInputAction.done,
               decoration:
-                  const InputDecoration(labelText: 'Tags (Comma Separated)'),
+              const InputDecoration(labelText: 'Tags (Comma Separated)'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter Tags' : null,
+              value != null && value.isEmpty ? 'Enter Tags' : null,
             ),
           ),
           const SizedBox(
@@ -551,15 +552,15 @@ class _UploadTabPageState extends State<UploadTabPage> {
               ),
               (pickedImage == null)
                   ? Image.asset(
-                      'images/NoImageDefault.jpg', //TODO: DOes not load
-                      fit: BoxFit.fitWidth,
-                      height: 250,
-                    )
+                'images/NoImageDefault.jpg', //TODO: DOes not load
+                fit: BoxFit.fitWidth,
+                height: 250,
+              )
                   : Image.file(
-                      File(pickedImage!.path!),
-                      fit: BoxFit.fitWidth,
-                      height: 250,
-                    ),
+                File(pickedImage!.path!),
+                fit: BoxFit.fitWidth,
+                height: 250,
+              ),
               ElevatedButton(
                   onPressed: pickImage, //TODO: Fix image sizing and whatnot
                   child: (pickedImage == null)

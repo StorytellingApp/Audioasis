@@ -147,5 +147,13 @@ class Series {
     stories: json['stories'],
     seriesName: json['seriesName'],
   );
+
+  String getSeriesID() {
+    return seriesID;
+  }
+
+  String getSeriesName() {
+    return seriesName;
+  }
 }
 
