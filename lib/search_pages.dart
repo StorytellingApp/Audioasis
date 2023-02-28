@@ -113,7 +113,7 @@ class _SearchTabPageState extends State<SearchTabPage> {
                                     ),
                                     onTap: () {
                                       //TODO: pass is name and information?
-                                      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayStoryPage(
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => DescriptionStoryPage(
                                         art: data['art'],
                                         authorID: data['authorID'],
                                         description: data['description'],
