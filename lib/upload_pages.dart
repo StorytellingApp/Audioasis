@@ -334,6 +334,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
   }
 
   Widget laterChapter() {
+    String _dropDownSeries = '';
 //https://stackoverflow.com/questions/49764905/how-to-assign-future-to-widget-in-flutter
     //https://stackoverflow.com/questions/56249715/futurebuilder-doesnt-wait-for-future-to-complete
     List<String> initialDataStuff = [];
@@ -349,7 +350,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
             //TODO: Do rest of upload page here - dropdown menu as well
             //TODO: Now, only replace thing when name == what is selected - another futurebuilder to get the data?
 
-            String _dropDownSeries = authorSeries.data!.first;
+            _dropDownSeries = authorSeries.data!.first;
 
 
             return Column(
@@ -569,38 +570,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
               const SizedBox(
                 height: 10,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Story Type'),
-                  const SizedBox(
-                    width: 25,
-                  ),
-                  DropdownButton<String>(
-                    value: _stringUpload,
-                    elevation: 16,
-                    underline: Container(
-                      height: 2,
-                    ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        _stringUpload = value!;
-                      });
-                    },
-                    items: uploadDropOptions
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
               const SizedBox(
                 height: 10,
               ),
-              (_stringUpload == 'Single') ? singleStory() : chapterStory(),
+              singleStory(),
             ],
           ),
         ),

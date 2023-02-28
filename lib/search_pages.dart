@@ -3,6 +3,7 @@ import 'package:destudio_test/searchCards.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'storyScaffold.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'auth_page.dart';
 import 'utils.dart';
@@ -12,6 +13,7 @@ import 'dart:io';
 import 'userClasses.dart';
 
 //https://www.youtube.com/watch?v=WbXTl9tiziI
+
 
 class SearchTabPage extends StatefulWidget {
   const SearchTabPage({Key? key}) : super(key: key);
@@ -76,7 +78,7 @@ class _SearchTabPageState extends State<SearchTabPage> {
                     builder: (context, snapshots) {
                       return (snapshots.connectionState ==
                               ConnectionState.waiting)
-                          ? Center(
+                          ? const Center(
                               child: CircularProgressIndicator(),
                             )
                           : ListView.builder(
@@ -96,7 +98,9 @@ class _SearchTabPageState extends State<SearchTabPage> {
                                     .startsWith(
                                         storyName.trim().toLowerCase())) {
                                   return ListTile(
+                                    dense: true,
                                     //TODO: add support for tapping
+                                    leading: Image.network(data['art']),
                                     title: Text(
                                       data['storyName'],
                                       maxLines: 1,
@@ -107,6 +111,20 @@ class _SearchTabPageState extends State<SearchTabPage> {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
+                                    onTap: () {
+                                      //TODO: pass is name and information?
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => PlayStoryPage(
+                                        art: data['art'],
+                                        authorID: data['authorID'],
+                                        description: data['description'],
+                                        downloadURL: data['downloadURL'],
+                                        series: 'false',
+                                        seriesID: data['seriesID'],
+                                        storyID: data['storyID'],
+                                        storyName: data['storyName'],
+                                        tags: data['tags'],
+                                      )));
+                                    },
                                   );
                                 }
                                 return Container();
@@ -133,32 +151,55 @@ class ShowGenres extends StatefulWidget {
 class _ShowGenresState extends State<ShowGenres> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: const Text(
-                  "Discover",
-                style: TextStyle(
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.black,
-                 ),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: const Text(
+                    "Discover",
+                  style: TextStyle(
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.black,
+                   ),
+                ),
               ),
-            ),
-            Container(
-              padding: EdgeInsets.all(16),
-              child: Icon(Icons.settings),
-            ),
-          ],
-        ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: const Icon(Icons.settings),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              genreCard('Adventure', 'adventure'),
+              genreCard('Action','action'),
+            ],
+          ),
 
-        //TODO: add list here
-      ],
+          //TODO: add list here
+        ],
+      ),
+    );
+  }
+
+  Widget genreCard(String title, String genre) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: Colors.grey,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title),
+          Image.asset('images/NoImageDefault.jpg',width: 50,)
+        ],
+      ),
     );
   }
 }
