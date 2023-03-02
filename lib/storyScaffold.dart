@@ -85,7 +85,6 @@ class DescriptionStoryPage extends StatefulWidget {
 }
 
 class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
-  final Map<String,dynamic> initialDataStuff = {};
 
   @override
   Widget build(BuildContext context) {
@@ -96,28 +95,16 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
       body: SingleChildScrollView(
         child: FutureBuilder(
           future: getAuthorItems(),
-          initialData: initialDataStuff,
-          builder: (BuildContext context, AsyncSnapshot<Map<String,dynamic>> authorInfo) {
-            if (authorInfo.hasData && !authorInfo.hasError) {
-              if (authorInfo.data!.isEmpty) {
-                return const Text('No Info Found');
-              }else{
-                final Map<String,dynamic>? newAuthorInfo = authorInfo.data;
-                if (newAuthorInfo == null) {
-                  return const Text('Author Does Not Exist');
-                }
-
-                return SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(newAuthorInfo['firstName']),
-                    ],
-                  ),
-                );
-              }
-            } else {
+          builder: (BuildContext context, AsyncSnapshot<AppUser> authorInfo) {
+            if (authorInfo.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator(),);
+            }else{
+              if (authorInfo.hasError || !authorInfo.hasData) {
+                return const Center(child: Text('An Error Occured'),);
+              }else {
+
+                return Text(authorInfo.data!.firstName);
+              }
             }
           },
         ),
@@ -125,21 +112,19 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
     );
   }
 
-  Future<Map<String,dynamic>> getAuthorItems() async {
-    final QuerySnapshot result = await FirebaseFirestore.instance
-        .collection('Stories')
-        .where('storyID',
-        isEqualTo: widget.storyID.toString())
+  Future<AppUser> getAuthorItems() async {
+    final DocumentSnapshot result = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(FirebaseAuth.instance.currentUser!.uid.toString())
         .get();
-    final List<DocumentSnapshot> documents = result.docs;
+    final DocumentSnapshot document = result;
+    final tempUser = AppUser(userID: document['userID'],
+        firstName: document['firstName'],
+        lastName: document['lastName'],
+        imageURL: document['imageURL']);
 
-    final Map<String,dynamic> storyMap = {
-      'userID': documents.first['userID'],
-      'firstName': documents.first['firstName'],
-      'lastName': documents.first['lastName'],
-      'imageURL': documents.first['imageURL'],
-    };
 
-    return storyMap;
+
+    return tempUser;
   }
 }

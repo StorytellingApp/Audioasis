@@ -7,6 +7,8 @@ import 'main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:email_validator/email_validator.dart';
 import 'utils.dart';
+import 'package:file_picker/file_picker.dart';
+
 
 //References:
 //https://www.youtube.com/watch?v=4vKiJZNPhss
@@ -49,6 +51,10 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    //Container(
+                      //padding: const EdgeInsets.all(16),
+                      //child: ,
+                    //),
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
                       child: TextFormField(

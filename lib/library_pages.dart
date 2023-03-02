@@ -65,6 +65,7 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
                       ],
                     )
                   ),
+                  ElevatedButton(onPressed: () => FirebaseAuth.instance.signOut(), child: const Text('signout')),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     physics: BouncingScrollPhysics(),
