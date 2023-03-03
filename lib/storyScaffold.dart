@@ -103,7 +103,7 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                 return const Center(child: Text('An Error Occured'),);
               }else {
 
-                return Text(authorInfo.data!.firstName);
+                return Text(authorInfo.data!.userID);
               }
             }
           },

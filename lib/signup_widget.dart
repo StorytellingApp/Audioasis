@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:destudio_test/userClasses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -29,6 +31,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
 
+  PlatformFile? pickedImage;
+  UploadTask? imageUploadTask;
+
   @override
   void dispose() {
     userNameController.dispose();
@@ -37,6 +42,15 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     lastNameController.dispose();
 
     super.dispose();
+  }
+
+  Future pickImage() async {
+    final userImage = await FilePicker.platform.pickFiles(type: FileType.image);
+    if (userImage == null) return;
+
+    setState(() {
+      pickedImage = userImage.files.first;
+    });
   }
 
   @override
@@ -51,10 +65,24 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    //Container(
-                      //padding: const EdgeInsets.all(16),
-                      //child: ,
-                    //),
+                    (pickedImage == null)
+                        ? Image.asset(
+                      'images/NoImageDefault.jpg', //TODO: DOes not load
+                      fit: BoxFit.fitWidth,
+                      height: 250,
+                    )
+                        : Image.file(
+                      File(pickedImage!.path!),
+                      fit: BoxFit.fitWidth,
+                      height: 250,
+                    ),
+                    const SizedBox(height: 15,),
+                    ElevatedButton(
+                        onPressed: pickImage, //TODO: Fix image sizing and whatnot
+                        child: (pickedImage == null)
+                            ? const Text('Pick an Image')
+                            : const Text('Choose Another Image')),
+                    const SizedBox(height: 15,),
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
                       child: TextFormField(
@@ -136,6 +164,11 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     final isValid = formKey.currentState!.validate();
     if (!isValid) return;
 
+    if (pickedImage == null) {
+      Utils.showSnackBar('Please Select an Image');
+      return;
+    }
+
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -153,11 +186,23 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       final userID = FirebaseAuth.instance.currentUser!.uid;
       print(userID);
 
+      //TODO: upload Image
+      final userImageID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}userImage${DateTime.now().toString()}';
+      final imagePath = 'UserImages/$userImageID';
+      final imageFile = File(pickedImage!.path!);
+      final imageRef = FirebaseStorage.instance.ref().child(imagePath);
+      imageUploadTask = imageRef.putFile(imageFile);
+      final imageSnapshot = await imageUploadTask!.whenComplete(() => {});
+      final imageURL = await imageSnapshot.ref.getDownloadURL();
+      print(imageURL);
+
+
+
       final test = AppUser(
           userID: userID,
           firstName: firstNameController.text.trim(),
           lastName: lastNameController.text.trim(),
-          imageURL: '');
+          imageURL: imageURL.toString());
       final docTest =
           FirebaseFirestore.instance.collection('Users').doc(userID);
       docTest.set(test.toJson());
