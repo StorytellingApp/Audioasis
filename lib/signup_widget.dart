@@ -187,7 +187,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       print(userID);
 
       //TODO: upload Image
-      final userImageID = '${FirebaseAuth.instance.currentUser!.uid!.toString()}userImage${DateTime.now().toString()}';
+      final userImageID = '${FirebaseAuth.instance.currentUser!.uid.toString()}userImage${DateTime.now().toString()}';
       final imagePath = 'UserImages/$userImageID';
       final imageFile = File(pickedImage!.path!);
       final imageRef = FirebaseStorage.instance.ref().child(imagePath);

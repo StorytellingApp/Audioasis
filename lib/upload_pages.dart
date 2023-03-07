@@ -92,9 +92,9 @@ class _UploadTabPageState extends State<UploadTabPage> {
     //Entire Form is Filled Out
     //https://www.reddit.com/r/Firebase/comments/tzwtzu/should_image_names_be_unique_when_storing_in/
     final storyID =
-        '${FirebaseAuth.instance.currentUser!.uid!.toString()}audio${DateTime.now().toString()}';
+        '${FirebaseAuth.instance.currentUser!.uid.toString()}audio${DateTime.now().toString()}';
     final imageID =
-        '${FirebaseAuth.instance.currentUser!.uid!.toString()}image${DateTime.now().toString()}';
+        '${FirebaseAuth.instance.currentUser!.uid.toString()}image${DateTime.now().toString()}';
     print(storyID);
     //Unique story ID
 
@@ -160,9 +160,9 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
     //Enitre form is filled out
     final storyID =
-        '${FirebaseAuth.instance.currentUser!.uid!.toString()}audio${DateTime.now().toString()}';
+        '${FirebaseAuth.instance.currentUser!.uid.toString()}audio${DateTime.now().toString()}';
     final imageID =
-        '${FirebaseAuth.instance.currentUser!.uid!.toString()}image${DateTime.now().toString()}';
+        '${FirebaseAuth.instance.currentUser!.uid.toString()}image${DateTime.now().toString()}';
 
     final imagePath = 'StoryImages/$imageID';
     final imageFile = File(pickedImage!.path!);
@@ -191,13 +191,13 @@ class _UploadTabPageState extends State<UploadTabPage> {
     }
 
     final seriesID =
-        '${FirebaseAuth.instance.currentUser!.uid!.toString()}series${DateTime.now().toString()}';
+        '${FirebaseAuth.instance.currentUser!.uid.toString()}series${DateTime.now().toString()}';
 
     //prep for putting to firebase - both playlist and story
     List<String> stories = [storyID];
     final uploadSeries = Series(
       seriesID: seriesID,
-      authorID: FirebaseAuth.instance.currentUser!.uid!.toString(),
+      authorID: FirebaseAuth.instance.currentUser!.uid.toString(),
       stories: stories,
       seriesName: seriesTitleController.text.trim(),
     );
