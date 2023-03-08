@@ -223,7 +223,7 @@ class _ShowGenresState extends State<ShowGenres> {
     return GestureDetector(
       onTap: () {
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const ShowGenrePage()));
+            MaterialPageRoute(builder: (context) => ShowGenrePage(genre: genre)));
       },
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -245,7 +245,10 @@ class _ShowGenresState extends State<ShowGenres> {
 }
 
 class ShowGenrePage extends StatefulWidget {
-  const ShowGenrePage({Key? key}) : super(key: key);
+  final String genre;
+
+  const ShowGenrePage({Key? key,
+  required this.genre}) : super(key: key);
 
   @override
   State<ShowGenrePage> createState() => _ShowGenrePageState();
@@ -259,12 +262,66 @@ class _ShowGenrePageState extends State<ShowGenrePage> {
         title: const Text('Title'),
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //TODO: list like search page
-            const Text('Hello'),
-          ],
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('Stories').where('tags',arrayContains: widget.genre)
+              .snapshots(),
+          builder: (context, snapshots) {
+            return (snapshots.connectionState ==
+                ConnectionState.waiting)
+                ? const Center(
+              child: CircularProgressIndicator(),
+            )
+                : ListView.builder(
+              itemCount: snapshots.data!.docs.length,
+              itemBuilder: (context, index) {
+                var data = snapshots.data!.docs[index].data()
+                as Map<String, dynamic>;
+
+
+                  return ListTile(
+                    dense: true,
+                    //TODO: add support for tapping
+                    leading: Image.network(data['art']),
+                    title: Text(
+                      data['storyName'],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                      data['description'],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    onTap: () {
+                      //TODO: pass is name and information?
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DescriptionStoryPage(
+                                    art: data['art'],
+                                    authorID:
+                                    data['authorID'],
+                                    description:
+                                    data['description'],
+                                    downloadURL:
+                                    data['downloadURL'],
+                                    series: 'false',
+                                    seriesID:
+                                    data['seriesID'],
+                                    storyID: data['storyID'],
+                                    storyName:
+                                    data['storyName'],
+                                    tags: data['tags'],
+                                  )));
+                    },
+                  );
+                }
+
+
+            );
+          },
         ),
       ),
     );
