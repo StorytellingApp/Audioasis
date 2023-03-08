@@ -262,6 +262,7 @@ class _ShowGenrePageState extends State<ShowGenrePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            //TODO: list like search page
             const Text('Hello'),
           ],
         ),
