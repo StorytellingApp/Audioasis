@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:destudio_test/main.dart';
 import 'package:destudio_test/userClasses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -91,6 +92,14 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
     //Entire Form is Filled Out
     //https://www.reddit.com/r/Firebase/comments/tzwtzu/should_image_names_be_unique_when_storing_in/
+
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ));
+
     final storyID =
         '${FirebaseAuth.instance.currentUser!.uid.toString()}audio${DateTime.now().toString()}';
     final imageID =
@@ -142,8 +151,31 @@ class _UploadTabPageState extends State<UploadTabPage> {
       seriesID: '',
     );
     final storyJsonUpload =
-    FirebaseFirestore.instance.collection('Stories').doc(storyID);
+        FirebaseFirestore.instance.collection('Stories').doc(storyID);
     storyJsonUpload.set(uploadStoryFirebase.toJson());
+
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    setState(() {
+      pickedImage = null;
+      pickedAudio = null;
+      titleController.clear();
+      descriptionController.clear();
+      tagController.clear();
+    });
+
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => AlertDialog(
+              title: const Text('Story Succesfully Uploaded'),
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Exit'))
+              ],
+            ));
   }
 
   Future uploadAllFirstSeries() async {
@@ -215,11 +247,11 @@ class _UploadTabPageState extends State<UploadTabPage> {
     );
 
     final storyJsonUpload =
-    FirebaseFirestore.instance.collection('Stories').doc(storyID);
+        FirebaseFirestore.instance.collection('Stories').doc(storyID);
     storyJsonUpload.set(uploadStory.toJson());
 
     final seriesJsonUpload =
-    FirebaseFirestore.instance.collection('Series').doc(seriesID);
+        FirebaseFirestore.instance.collection('Series').doc(seriesID);
     seriesJsonUpload.set(uploadSeries.toJson());
   }
 
@@ -256,7 +288,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Series Name'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter a Series Name' : null,
+                  value != null && value.isEmpty ? 'Enter a Series Name' : null,
             ),
           ),
           Container(
@@ -267,7 +299,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Chapter Name'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter a Name' : null,
+                  value != null && value.isEmpty ? 'Enter a Name' : null,
             ),
           ),
           Container(
@@ -278,7 +310,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Story Description'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter a Description' : null,
+                  value != null && value.isEmpty ? 'Enter a Description' : null,
             ),
           ),
           if (pickedAudio != null)
@@ -315,10 +347,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
               controller: seriesTagController,
               textInputAction: TextInputAction.done,
               decoration:
-              const InputDecoration(labelText: 'Tags (Comma Separated)'),
+                  const InputDecoration(labelText: 'Tags (Comma Separated)'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter Tags' : null,
+                  value != null && value.isEmpty ? 'Enter Tags' : null,
             ),
           ),
           const SizedBox(
@@ -341,17 +373,17 @@ class _UploadTabPageState extends State<UploadTabPage> {
     return FutureBuilder(
       future: getItems(),
       initialData: initialDataStuff,
-      builder: (BuildContext context, AsyncSnapshot<List<String>> authorSeries) {
+      builder:
+          (BuildContext context, AsyncSnapshot<List<String>> authorSeries) {
         if (authorSeries.hasData && !authorSeries.hasError) {
-          if (authorSeries.data!.isEmpty){
+          if (authorSeries.data!.isEmpty) {
             return const Text('No Series Found');
             //Either loading data or none found
-          }else{
+          } else {
             //TODO: Do rest of upload page here - dropdown menu as well
             //TODO: Now, only replace thing when name == what is selected - another futurebuilder to get the data?
 
             _dropDownSeries = authorSeries.data!.first;
-
 
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -359,9 +391,12 @@ class _UploadTabPageState extends State<UploadTabPage> {
                 //Text(authorSeries.data!.first.toString()),
                 DropdownButton<String>(
                   value: _dropDownSeries,
-                  isExpanded: true, //https://stackoverflow.com/questions/54069869/how-to-solve-a-renderflex-overflowed-by-143-pixels-on-the-right-error-in-text
+                  isExpanded:
+                      true, //https://stackoverflow.com/questions/54069869/how-to-solve-a-renderflex-overflowed-by-143-pixels-on-the-right-error-in-text
                   elevation: 16,
-                  underline: Container(height: 2,),
+                  underline: Container(
+                    height: 2,
+                  ),
                   onChanged: (String? value) {
                     setState(() {
                       _dropDownSeries = value!;
@@ -374,20 +409,19 @@ class _UploadTabPageState extends State<UploadTabPage> {
                       //https://stackoverflow.com/questions/51930754/flutter-wrapping-text
                       child: Container(
                         padding: EdgeInsets.all(16),
-                        child: Text(value,overflow: TextOverflow.ellipsis),
+                        child: Text(value, overflow: TextOverflow.ellipsis),
                       ),
-
-
                     );
                   }).toList(),
                 ),
               ],
             );
           }
-        }else{
-          return const Center(child: CircularProgressIndicator(),);
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
-
       },
     );
   }
@@ -396,7 +430,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
     final QuerySnapshot result = await FirebaseFirestore.instance
         .collection('Series')
         .where('authorID',
-        isEqualTo: FirebaseAuth.instance.currentUser!.uid.toString())
+            isEqualTo: FirebaseAuth.instance.currentUser!.uid.toString())
         .get();
     final List<DocumentSnapshot> documents = result.docs;
 
@@ -426,7 +460,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Title'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter a Name' : null,
+                  value != null && value.isEmpty ? 'Enter a Name' : null,
             ),
           ),
           Container(
@@ -437,7 +471,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               decoration: const InputDecoration(labelText: 'Description'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter a Description' : null,
+                  value != null && value.isEmpty ? 'Enter a Description' : null,
             ),
           ),
           const SizedBox(
@@ -481,10 +515,10 @@ class _UploadTabPageState extends State<UploadTabPage> {
               controller: tagController,
               textInputAction: TextInputAction.done,
               decoration:
-              const InputDecoration(labelText: 'Tags (Comma Separated)'),
+                  const InputDecoration(labelText: 'Tags (Comma Separated)'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-              value != null && value.isEmpty ? 'Enter Tags' : null,
+                  value != null && value.isEmpty ? 'Enter Tags' : null,
             ),
           ),
           const SizedBox(
@@ -553,15 +587,15 @@ class _UploadTabPageState extends State<UploadTabPage> {
               ),
               (pickedImage == null)
                   ? Image.asset(
-                'images/NoImageDefault.jpg', //TODO: DOes not load
-                fit: BoxFit.fitWidth,
-                height: 250,
-              )
+                      'images/NoImageDefault.jpg', //TODO: DOes not load
+                      fit: BoxFit.fitWidth,
+                      height: 250,
+                    )
                   : Image.file(
-                File(pickedImage!.path!),
-                fit: BoxFit.fitWidth,
-                height: 250,
-              ),
+                      File(pickedImage!.path!),
+                      fit: BoxFit.fitWidth,
+                      height: 250,
+                    ),
               ElevatedButton(
                   onPressed: pickImage, //TODO: Fix image sizing and whatnot
                   child: (pickedImage == null)
