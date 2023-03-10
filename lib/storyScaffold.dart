@@ -169,7 +169,7 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
   Future<AppUser> getAuthorItems() async {
     final DocumentSnapshot result = await FirebaseFirestore.instance
         .collection('Users')
-        .doc(FirebaseAuth.instance.currentUser!.uid.toString())
+        .doc(widget.authorID)
         .get();
     final DocumentSnapshot document = result;
     final tempUser = AppUser(userID: document['userID'],
