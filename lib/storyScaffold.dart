@@ -81,7 +81,6 @@ class DescriptionStoryPage extends StatefulWidget {
 }
 
 class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,69 +92,124 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
           future: getAuthorItems(),
           builder: (BuildContext context, AsyncSnapshot<AppUser> authorInfo) {
             if (authorInfo.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator(),);
-            }else{
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
               if (authorInfo.hasError || !authorInfo.hasData) {
-                return const Center(child: Text('An Error Occured'),);
-              }else {
+                return const Center(
+                  child: Text('An Error Occurred'),
+                );
+              } else {
                 //Text(authorInfo.data!.userID)
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 15,),
-                    Text(widget.storyName),
-                    const SizedBox(height: 15,),
-                    Center(child: Image.network(widget.art, width: 250,),),
-                    const SizedBox(height: 15,),
-                    //TODO: adjust row for things
-                    Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                      Image.network(authorInfo.data!.imageURL, width: 50,),
-                      Text(authorInfo.data!.firstName,style: const TextStyle(fontSize: 20, overflow: TextOverflow.ellipsis),),
-                        IconButton(onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => PlayAudioStoryPage(
-                            art: widget.art,
-                            authorID: widget.authorID,
-                            description: widget.description,
-                            downloadURL: widget.downloadURL,
-                            series: widget.series,
-                            seriesID: widget.seriesID,
-                            storyID: widget.storyID,
-                            storyName: widget.storyName,
-                            tags: widget.tags,
-                            firstName: authorInfo.data!.firstName,
-                            imageURL: authorInfo.data!.imageURL,
-                            lastName: authorInfo.data!.lastName,
-                            userID: authorInfo.data!.userID,
-                          )));
-                        },
-                            icon: const Icon(Icons.play_circle_fill_outlined))
-                    ],
+                    const SizedBox(
+                      height: 15,
                     ),
-                    const SizedBox(height: 15,),
-                    SizedBox(width: 250,
-                    child: Text(widget.description, style: const TextStyle(
-                      fontSize: 18,
-                    ),),),
-                    const SizedBox(height: 30,),
+                    //TODO: Fix Alignment
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(child: Container()),
+                        Expanded(
+                          child: Text(widget.storyName),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: bottomMenu,
+                            child: const Icon(
+                              Icons.more_horiz,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Center(
+                      child: Image.network(
+                        widget.art,
+                        width: 250,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    //TODO: adjust row for things
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Image.network(
+                          authorInfo.data!.imageURL,
+                          width: 50,
+                        ),
+                        Text(
+                          authorInfo.data!.firstName,
+                          style: const TextStyle(
+                              fontSize: 20, overflow: TextOverflow.ellipsis),
+                        ),
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PlayAudioStoryPage(
+                                            art: widget.art,
+                                            authorID: widget.authorID,
+                                            description: widget.description,
+                                            downloadURL: widget.downloadURL,
+                                            series: widget.series,
+                                            seriesID: widget.seriesID,
+                                            storyID: widget.storyID,
+                                            storyName: widget.storyName,
+                                            tags: widget.tags,
+                                            firstName:
+                                                authorInfo.data!.firstName,
+                                            imageURL: authorInfo.data!.imageURL,
+                                            lastName: authorInfo.data!.lastName,
+                                            userID: authorInfo.data!.userID,
+                                          )));
+                            },
+                            icon: const Icon(Icons.play_circle_fill_outlined))
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    SizedBox(
+                      width: 250,
+                      child: Text(
+                        widget.description,
+                        style: const TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
                     const Text('Tags'),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
 
                     Container(
                       margin: const EdgeInsets.all(16),
                       height: 80,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: widget.tags.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index == widget.tags.length - 1){
-                          return Text('${widget.tags[index]}');
-                        }
-                        return Text('${widget.tags[index]},     ');
-                      },
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: widget.tags.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index == widget.tags.length - 1) {
+                            return Text('${widget.tags[index]}');
+                          }
+                          return Text('${widget.tags[index]},     ');
+                        },
+                      ),
                     ),
-                    ),
-
                   ],
                 );
               }
@@ -166,18 +220,181 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
     );
   }
 
+  //https://stackoverflow.com/questions/54188895/how-to-implement-a-bottom-navigation-drawer-in-flutter
+
+  void bottomMenu() {
+    //TODO: Add functionality
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 15,
+                ),
+                Text(widget.storyName),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed?
+                    children: [
+                      Icon(Icons.thumb_up_outlined),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('Like'),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed?
+                    children: [
+                      Icon(Icons.thumb_down_outlined),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('Dislike'),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed?
+                    children: [
+                      Icon(Icons.bookmark_border),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('Add to Listen Later'),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed?
+                    children: [
+                      Icon(Icons.add_to_photos_outlined),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('Add to Playlist'),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed? - double check whats there
+                    children: [
+                      Icon(Icons.share),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('Share'),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed?
+                    children: [
+                      Icon(Icons.read_more_outlined),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('View Story Description'),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed?
+                    children: [
+                      Icon(Icons.account_circle_outlined),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('View Author Profile'),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed?
+                    children: [
+                      Icon(Icons.transcribe_outlined),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('View Transcript'),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    //TODO: On pressed?
+                    children: [
+                      Icon(Icons.report_outlined),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      const Text('Report'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
   Future<AppUser> getAuthorItems() async {
     final DocumentSnapshot result = await FirebaseFirestore.instance
         .collection('Users')
         .doc(widget.authorID)
         .get();
     final DocumentSnapshot document = result;
-    final tempUser = AppUser(userID: document['userID'],
+    final tempUser = AppUser(
+        userID: document['userID'],
         firstName: document['firstName'],
         lastName: document['lastName'],
         imageURL: document['imageURL']);
-
-
 
     return tempUser;
   }
@@ -199,8 +416,8 @@ class PlayAudioStoryPage extends StatefulWidget {
   final String lastName;
   final String userID;
 
-
-  const PlayAudioStoryPage({Key? key,
+  const PlayAudioStoryPage({
+    Key? key,
     required this.art,
     required this.authorID,
     required this.description,
@@ -233,7 +450,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
 
     setAudio();
 
-    if (mounted){
+    if (mounted) {
       audioPlayer.onPlayerStateChanged.listen((state) {
         if (mounted) {
           setState(() {
@@ -243,20 +460,17 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
       });
     }
 
-
-    if (mounted){
+    if (mounted) {
       audioPlayer.onDurationChanged.listen((newDuration) {
         if (mounted) {
           setState(() {
             duration = newDuration;
           });
         }
-
       });
     }
 
-
-    if (mounted){
+    if (mounted) {
       audioPlayer.onPositionChanged.listen((newPosition) {
         if (mounted) {
           setState(() {
@@ -265,9 +479,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
         }
       });
     }
-
   }
-
 
   @override
   dispose() {
@@ -275,7 +487,6 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
 
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -286,36 +497,52 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 15,),
-            Center(child: Image.network(widget.art, width: 250,)),
-            const SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
+            Center(
+                child: Image.network(
+              widget.art,
+              width: 250,
+            )),
+            const SizedBox(
+              height: 15,
+            ),
             Text(widget.storyName),
-            const SizedBox(height: 15,),
+            const SizedBox(
+              height: 15,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Image.network(widget.imageURL,width: 75,),
+                Image.network(
+                  widget.imageURL,
+                  width: 75,
+                ),
                 Text(widget.firstName),
               ],
             ),
-            const SizedBox(height: 25,),
+            const SizedBox(
+              height: 25,
+            ),
             Slider(
               min: 0,
               max: duration.inSeconds.toDouble(),
-                value: position.inSeconds.toDouble(),
-                onChanged: (value) async {
-                  final position = Duration(seconds: value.toInt());
-                  await audioPlayer.seek(position);
-                },
+              value: position.inSeconds.toDouble(),
+              onChanged: (value) async {
+                final position = Duration(seconds: value.toInt());
+                await audioPlayer.seek(position);
+              },
             ),
-            Padding(padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(formatTime(position)),
-                Text(formatTime(duration)),
-              ],
-            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(formatTime(position)),
+                  Text(formatTime(duration)),
+                ],
+              ),
             ),
             CircleAvatar(
               radius: 35,
@@ -340,7 +567,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
   }
 
   String formatTime(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2,'0');
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
@@ -356,7 +583,5 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
     audioPlayer.setReleaseMode(ReleaseMode.release);
 
     audioPlayer.setSourceUrl(widget.downloadURL);
-
   }
 }
-
