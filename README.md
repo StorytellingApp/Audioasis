@@ -7,7 +7,7 @@ Audioasis is a short story platform where anyone can upload a narrated short sto
 - Destudio, Initial Team
 
 ## Key Dates
-09/2022 - Present
+09/2022 - 3/2023
 - Initial Requirements
 - Initial App Development
 
