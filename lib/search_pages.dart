@@ -1,17 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:destudio_test/searchCards.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'storyScaffold.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'auth_page.dart';
-import 'utils.dart';
-import 'verify_email_page.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:io';
-import 'userClasses.dart';
-
 //https://www.youtube.com/watch?v=WbXTl9tiziI
 
 class SearchTabPage extends StatefulWidget {
@@ -25,6 +14,8 @@ class _SearchTabPageState extends State<SearchTabPage> {
   final searchController = TextEditingController();
   final searchKey = GlobalKey<FormState>();
 
+  //initial story name - empty means nothing is searched for
+  //changes based on search controller
   String storyName = '';
 
   @override
@@ -54,6 +45,7 @@ class _SearchTabPageState extends State<SearchTabPage> {
                 ),
               ], //children
             ),
+            //Actual search bar
             Container(
               padding: const EdgeInsets.all(16),
               child: TextField(
@@ -63,15 +55,19 @@ class _SearchTabPageState extends State<SearchTabPage> {
                     prefixIcon: Icon(Icons.search)),
                 onChanged: (val) {
                   setState(() {
+                    //assigns search to storyname
                     storyName = val;
                   });
                 },
               ),
             ),
 
+            //changes page content based on if it is being searched or not
+            //show genres only if search bar is empty - rldr display search
             (searchController.text.isEmpty)
                 ? ShowGenres()
                 : SizedBox(
+              //returns result of search
                     height: 200,
                     child: StreamBuilder(
                       stream: FirebaseFirestore.instance
@@ -84,21 +80,24 @@ class _SearchTabPageState extends State<SearchTabPage> {
                                 child: CircularProgressIndicator(),
                               )
                             : ListView.builder(
+                          //creates list
                                 itemCount: snapshots.data!.docs.length,
                                 itemBuilder: (context, index) {
                                   var data = snapshots.data!.docs[index].data()
                                       as Map<String, dynamic>;
-
+                                  //if search empty - return nothing
                                   if (storyName.isEmpty) {
                                     return Container();
                                   }
 
+                                  //only display story if name matches with search
                                   if (data['storyName']
                                       .toString()
                                       .trim()
                                       .toLowerCase()
                                       .startsWith(
                                           storyName.trim().toLowerCase())) {
+                                    //generates list tile result - how it is shown
                                     return ListTile(
                                       dense: true,
                                       //TODO: add support for tapping
@@ -115,6 +114,7 @@ class _SearchTabPageState extends State<SearchTabPage> {
                                       ),
                                       onTap: () {
                                         //TODO: pass is name and information?
+                                        //on tap -goes to play story page
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -157,7 +157,7 @@ class ShowGenres extends StatefulWidget {
   @override
   State<ShowGenres> createState() => _ShowGenresState();
 }
-
+//card that shows genres
 class _ShowGenresState extends State<ShowGenres> {
   @override
   Widget build(BuildContext context) {
@@ -186,6 +186,7 @@ class _ShowGenresState extends State<ShowGenres> {
             ],
           ),
           Row(
+            //each card acts the same - see below
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               genreCard('Adventure', 'adventure'),
@@ -219,6 +220,7 @@ class _ShowGenresState extends State<ShowGenres> {
     );
   }
 
+  //shows the actual display - navigates to separate page to show genre
   Widget genreCard(String title, String genre) {
     return GestureDetector(
       onTap: () {
@@ -244,6 +246,7 @@ class _ShowGenresState extends State<ShowGenres> {
   }
 }
 
+//shows genre via list
 class ShowGenrePage extends StatefulWidget {
   final String genre;
 
@@ -263,6 +266,7 @@ class _ShowGenrePageState extends State<ShowGenrePage> {
       ),
       body: SafeArea(
         child: StreamBuilder(
+          //query FIrebase for only stories that contain the selected genre
           stream: FirebaseFirestore.instance
               .collection('Stories').where('tags',arrayContains: widget.genre)
               .snapshots(),
@@ -279,9 +283,9 @@ class _ShowGenrePageState extends State<ShowGenrePage> {
                 as Map<String, dynamic>;
 
 
+                //eventually leads to same play page as search list does
                   return ListTile(
                     dense: true,
-                    //TODO: add support for tapping
                     leading: Image.network(data['art']),
                     title: Text(
                       data['storyName'],
@@ -294,7 +298,7 @@ class _ShowGenrePageState extends State<ShowGenrePage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     onTap: () {
-                      //TODO: pass is name and information?
+                      //goes to play page - same page essentially as one from search
                       Navigator.push(
                           context,
                           MaterialPageRoute(

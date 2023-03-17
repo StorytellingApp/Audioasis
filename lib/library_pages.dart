@@ -1,13 +1,7 @@
-import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'auth_page.dart';
-import 'utils.dart';
-import 'verify_email_page.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:io';
+
+//Provides User Library Page
 
 class LibraryTabPage extends StatefulWidget {
   const LibraryTabPage({Key? key}) : super(key: key);
@@ -20,9 +14,11 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //Overlays items onto color gradient
       body: Stack(
         alignment: Alignment.topCenter ,
         children: [
+          //color gradient
           Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -38,26 +34,28 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
             ),
           ),
           SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            //main content
+            physics: const BouncingScrollPhysics(),
             child: SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                             "My Library",
                           style: TextStyle(fontSize: 25, color: Colors.white),
                         ),
                         Row(
-                          children: [
-                            const CircleAvatar(
+                          children: const [
+                            CircleAvatar(
                               radius: 20.0,
+                              //TODO: Temporary image
                               backgroundImage: AssetImage('images/UserProfilePic.jpg'),
                             ),
                           ],
@@ -65,38 +63,41 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
                       ],
                     )
                   ),
+
+                  //Signs Users out - this is a temporary button used for testing
                   ElevatedButton(onPressed: () => FirebaseAuth.instance.signOut(), child: const Text('signout')),
+                  //List for liked and listen later
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    padding: EdgeInsets.all(20),
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.all(20),
                     child: Row(
-                      children: [
+                      children: const [
                         PlaylistCard(image: AssetImage('images/NoImageDefault.jpg'), title: "Liked"),
                         SizedBox(width: 8),
                         PlaylistCard(image: AssetImage('images/NoImageDefault.jpg'), title: "Listen Later"),
                       ],
                     ),
                   ),
-                  SizedBox(height: 32),
+                  const SizedBox(height: 32),
                   Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
+                        const Text(
                             "Personal Playlists",
                             style: TextStyle(fontSize: 25, color: Colors.white),
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Row(
-                          children: [
+                          children: const [
                             PlaylistsCard(image: AssetImage('images/NoImageDefault.jpg'), title: "Playlist"),
                             SizedBox(width: 16),
                             PlaylistsCard(image: AssetImage('images/NoImageDefault.jpg'), title: "Playlist"),
                           ],
                         ),
-                        SizedBox(height: 16)
+                        const SizedBox(height: 16)
                       ],
                     ),
                   ),
@@ -110,7 +111,7 @@ class _LibraryTabPageState extends State<LibraryTabPage> {
   }
 }
 
-
+//For displaying playlists
 class PlaylistCard extends StatelessWidget {
   final ImageProvider image;
   final String title;
@@ -154,7 +155,7 @@ class PlaylistsCard extends StatelessWidget {
               width: 100,
               fit: BoxFit.cover,
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(title),
           ],
         ),

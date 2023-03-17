@@ -14,6 +14,7 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+  //Controllers
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
 
@@ -38,6 +39,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             children: [
               const Text('Reset Password', style: TextStyle(fontSize: 14),),
               TextFormField(
+                //For getting email
                 controller: emailController,
                 textInputAction: TextInputAction.done,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -58,6 +60,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future resetPassword() async {
+    //sends email reset
+
+    //creates circularprogressindicator
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -65,13 +70,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
 
     try {
+      //sends reset email
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
 
       Utils.showSnackBar('Password Reset Email Sent');
+      //Hide CircularProgressIndicator
       Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
 
+      //Show errors
       Utils.showSnackBar(e.message);
       Navigator.of(context).pop();
     }

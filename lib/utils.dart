@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 //References:
 //https://www.youtube.com/watch?v=4vKiJZNPhss
 
+//Created a small notification at the bottom of the screen
+
 class Utils {
   static final messengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -17,6 +19,8 @@ class Utils {
   }
 }
 
+
+//No longer used
 class TestUser {
   String id;
   final String name;

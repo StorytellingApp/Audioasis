@@ -16,7 +16,7 @@ class VerifyEmailPage extends StatefulWidget {
 
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
   bool isEmailVerified = false;
-  bool canResendEmail = false;
+  bool canResendEmail = false; //for preventing constant resending of emails
   Timer? timer;
 
   @override
@@ -26,9 +26,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     //User created before
     isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
 
+    //sends initial verification emai;
     if (!isEmailVerified) {
       sendVerificationEmail();
 
+      //this checks every 3 seconds for email is verified
       timer = Timer.periodic(
         const Duration(seconds: 3),
           (_) => checkEmailVerified(),
@@ -42,6 +44,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     super.dispose();
   }
 
+  //This method is called to check verification
   Future checkEmailVerified() async {
     //call after email verification
     await FirebaseAuth.instance.currentUser!.reload();
@@ -50,15 +53,18 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
     });
 
+    //stops timer
     if (isEmailVerified) timer?.cancel();
   }
 
+  //sends email
   Future sendVerificationEmail() async {
     try {
       final user = FirebaseAuth.instance.currentUser!;
       await user.sendEmailVerification();
 
       setState(() =>canResendEmail = false);
+      //prevents constant resending of email
       await Future.delayed(Duration(seconds: 5));
       setState(() => canResendEmail = true);
 
@@ -69,7 +75,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
   @override
   Widget build(BuildContext context) => isEmailVerified
-      ? const HomePage()
+      ? const HomePage() //if email verified, go home - else, wait on verification
       : Scaffold(
         appBar: AppBar(
           title: const Text('Verify Email'),

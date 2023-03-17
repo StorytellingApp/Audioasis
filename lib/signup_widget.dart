@@ -25,7 +25,7 @@ class SignUpWidget extends StatefulWidget {
 }
 
 class _SignUpWidgetState extends State<SignUpWidget> {
-  final formKey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>(); //form key for validation
   final userNameController = TextEditingController();
   final passwordController = TextEditingController();
   final firstNameController = TextEditingController();
@@ -45,7 +45,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 
   Future pickImage() async {
-    final userImage = await FilePicker.platform.pickFiles(type: FileType.image);
+    final userImage = await FilePicker.platform.pickFiles(type: FileType.image); //uses file picker to select image for profile
     if (userImage == null) return;
 
     setState(() {
@@ -65,27 +65,27 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    (pickedImage == null)
+                    (pickedImage == null) //If no image selected, default, else, use selected one
                         ? Image.asset(
-                      'images/NoImageDefault.jpg', //TODO: DOes not load
+                      'images/NoImageDefault.jpg', //default image
                       fit: BoxFit.fitWidth,
                       height: 250,
                     )
                         : Image.file(
-                      File(pickedImage!.path!),
+                      File(pickedImage!.path!), //selected image
                       fit: BoxFit.fitWidth,
                       height: 250,
                     ),
                     const SizedBox(height: 15,),
                     ElevatedButton(
                         onPressed: pickImage, //TODO: Fix image sizing and whatnot
-                        child: (pickedImage == null)
+                        child: (pickedImage == null) // switches when image is selected
                             ? const Text('Pick an Image')
                             : const Text('Choose Another Image')),
                     const SizedBox(height: 15,),
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
-                      child: TextFormField(
+                      child: TextFormField( //email field
 
 
                         controller: userNameController,
@@ -99,6 +99,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       ),
                     ),
                     Container(
+                      //password field
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
                       child: TextFormField(
                         controller: passwordController,
@@ -106,12 +107,13 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         decoration: const InputDecoration(labelText: 'Password'),
                         obscureText: true,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (value) => value != null && value.length < 6
-                            ? 'Enter 6 characters minimum'
+                        validator: (value) => value != null && value.length < 6 //validation
+                            ? 'Enter 6 characters minimum' //6 char requirements
                             : null,
                       ),
                     ),
                     Container(
+                      //first name field
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
                       child: TextFormField(
                         controller: firstNameController,
@@ -119,10 +121,11 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         decoration: const InputDecoration(labelText: 'First Name'),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) =>
-                            value != null && value.isEmpty ? 'Enter a Name' : null,
+                            value != null && value.isEmpty ? 'Enter a Name' : null, //validation
                       ),
                     ),
                     Container(
+                      //last name field
                       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25.0),
                       child: TextFormField(
                         controller: lastNameController,
@@ -130,14 +133,14 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         decoration: const InputDecoration(labelText: 'Last Name'),
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) =>
-                            value != null && value.isEmpty ? 'Enter a Name' : null,
+                            value != null && value.isEmpty ? 'Enter a Name' : null, //validation
                       ),
                     ),
                     TextButton(
-                      onPressed: signIn,
+                      onPressed: signIn, //calls signIn when pressed
                       child: const Text('Sign Up'),
                     ),
-                    RichText(
+                    RichText( //switch between sign up and sign in
                       text: TextSpan(
                           style: const TextStyle(color: Colors.black, fontSize: 16),
                           text: 'Already have an account?   ',
@@ -160,23 +163,23 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       );
   }
 
-  Future signIn() async {
-    final isValid = formKey.currentState!.validate();
+  Future signIn() async { //called to sign in
+    final isValid = formKey.currentState!.validate(); //validates form
     if (!isValid) return;
 
-    if (pickedImage == null) {
+    if (pickedImage == null) { //ensures image is selected
       Utils.showSnackBar('Please Select an Image');
       return;
     }
 
-    showDialog(
+    showDialog( //waits
         context: context,
         barrierDismissible: false,
         builder: (context) => const Center(
               child: CircularProgressIndicator(),
             ));
 
-    try {
+    try { //tries creating an account
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: userNameController.text.trim(),
         password: passwordController.text.trim(),
@@ -186,32 +189,32 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       final userID = FirebaseAuth.instance.currentUser!.uid;
       print(userID);
 
-      //TODO: upload Image
-      final userImageID = '${FirebaseAuth.instance.currentUser!.uid.toString()}userImage${DateTime.now().toString()}';
-      final imagePath = 'UserImages/$userImageID';
-      final imageFile = File(pickedImage!.path!);
-      final imageRef = FirebaseStorage.instance.ref().child(imagePath);
-      imageUploadTask = imageRef.putFile(imageFile);
-      final imageSnapshot = await imageUploadTask!.whenComplete(() => {});
-      final imageURL = await imageSnapshot.ref.getDownloadURL();
+      //uploads image
+      final userImageID = '${FirebaseAuth.instance.currentUser!.uid.toString()}userImage${DateTime.now().toString()}'; //creates iamge id
+      final imagePath = 'UserImages/$userImageID'; //gets image path
+      final imageFile = File(pickedImage!.path!); //picks image
+      final imageRef = FirebaseStorage.instance.ref().child(imagePath); //gets place to store image
+      imageUploadTask = imageRef.putFile(imageFile); // uploads image, tracks upload
+      final imageSnapshot = await imageUploadTask!.whenComplete(() => {}); //waits for image to finish uploading
+      final imageURL = await imageSnapshot.ref.getDownloadURL(); //get download url
       print(imageURL);
 
 
 
-      final test = AppUser(
+      final test = AppUser( //creates app user
           userID: userID,
           firstName: firstNameController.text.trim(),
           lastName: lastNameController.text.trim(),
           imageURL: imageURL.toString());
-      final docTest =
+      final docTest = //gets reference to where to store user info
           FirebaseFirestore.instance.collection('Users').doc(userID);
-      docTest.set(test.toJson());
+      docTest.set(test.toJson()); //stores information
     } on FirebaseAuthException catch (e) {
       print(e);
 
-      Utils.showSnackBar(e.message);
+      Utils.showSnackBar(e.message); //shows failure
     }
 
-    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    navigatorKey.currentState!.popUntil((route) => route.isFirst); //removes load icon
   }
 }

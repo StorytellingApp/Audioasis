@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+//Not sure what this is used for - commenter was not author of this module
+
 class SearchCards {
   final String url;
   final String author;

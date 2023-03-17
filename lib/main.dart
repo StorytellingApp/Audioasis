@@ -10,11 +10,12 @@ import 'verify_email_page.dart';
 
 Future main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(); //Initialize firebase
 
   runApp(const MyApp());
 }
 
+//for snackbars and other navigation - needs to be global
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      //sets up designs
       scaffoldMessengerKey: Utils.messengerKey,
       navigatorKey: navigatorKey,
       title: 'Audioasis',
@@ -44,22 +46,24 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
+//this is the very first page reached
 class MainPage extends StatelessWidget {
   const MainPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Scaffold(
     body: StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
+      stream: FirebaseAuth.instance.authStateChanges(), //listens to changes in pages
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting){
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return const Center(child: Text('Connection Error'));
         } else if (snapshot.hasData){
+          //will go here if waiting on email verification
           return const VerifyEmailPage();
         } else {
+          //goes here else
           return const AuthPage();
         }
       },

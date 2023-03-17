@@ -1,6 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'userClasses.dart';
@@ -8,7 +7,7 @@ import 'userClasses.dart';
 //https://www.youtube.com/watch?v=MB3YGQ-O1lk
 
 class PlayStoryPage extends StatefulWidget {
-  final String art;
+  final String art; //image url
   final String authorID;
   final String description;
   final String downloadURL;
@@ -53,7 +52,8 @@ class _PlayStoryPageState extends State<PlayStoryPage> {
 }
 
 class DescriptionStoryPage extends StatefulWidget {
-  final String art;
+  //NOTE: Call these with widget.variable name
+  final String art; //image url
   final String authorID;
   final String description;
   final String downloadURL;
@@ -84,32 +84,32 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Story'),
+      appBar: AppBar( //app bar is needed for back buttion
+        title: const Text('Story'), //title of page - potentially change to story name
       ),
       body: SingleChildScrollView(
         child: FutureBuilder(
-          future: getAuthorItems(),
+          future: getAuthorItems(),// this gets the information about the author of the story - investigate better ways to do it
           builder: (BuildContext context, AsyncSnapshot<AppUser> authorInfo) {
-            if (authorInfo.connectionState == ConnectionState.waiting) {
+            if (authorInfo.connectionState == ConnectionState.waiting) { //if waiting for author information
               return const Center(
                 child: CircularProgressIndicator(),
               );
             } else {
-              if (authorInfo.hasError || !authorInfo.hasData) {
+              if (authorInfo.hasError || !authorInfo.hasData) { //if there is an error
                 return const Center(
                   child: Text('An Error Occurred'),
                 );
-              } else {
+              } else { //no error
                 //Text(authorInfo.data!.userID)
-                return Column(
+                return Column( //correct information is returned
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(
+                    const SizedBox( //note: these are spacers
                       height: 15,
                     ),
                     //TODO: Fix Alignment
-                    Row(
+                    Row( //this si for top menu
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Expanded(child: Container()),
@@ -118,7 +118,7 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                         ),
                         Expanded(
                           child: GestureDetector(
-                            onTap: bottomMenu,
+                            onTap: bottomMenu, //this is called when tapped
                             child: const Icon(
                               Icons.more_horiz,
                             ),
@@ -129,10 +129,10 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                     const SizedBox(
                       height: 15,
                     ),
-                    Center(
+                    Center( //story image
                       child: Image.network(
                         widget.art,
-                        width: 250,
+                        width: 250, //can change for sizing - maybe dynamic sizing
                       ),
                     ),
                     const SizedBox(
@@ -142,21 +142,21 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Image.network(
+                        Image.network(//author image
                           authorInfo.data!.imageURL,
                           width: 50,
                         ),
-                        Text(
+                        Text( //author name - switch to username?
                           authorInfo.data!.firstName,
                           style: const TextStyle(
                               fontSize: 20, overflow: TextOverflow.ellipsis),
                         ),
-                        IconButton(
+                        IconButton( //this play button routes user to play page
                             onPressed: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => PlayAudioStoryPage(
+                                      builder: (context) => PlayAudioStoryPage( //for some reason this is necessary - investigate better ways to do it
                                             art: widget.art,
                                             authorID: widget.authorID,
                                             description: widget.description,
@@ -179,7 +179,7 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                     const SizedBox(
                       height: 15,
                     ),
-                    SizedBox(
+                    SizedBox(//descrption of story
                       width: 250,
                       child: Text(
                         widget.description,
@@ -199,14 +199,14 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                     Container(
                       margin: const EdgeInsets.all(16),
                       height: 80,
-                      child: ListView.builder(
+                      child: ListView.builder( //allows for scrolling of tags if there are many - guaranteed to be at least one
                         scrollDirection: Axis.horizontal,
                         itemCount: widget.tags.length,
                         itemBuilder: (BuildContext context, int index) {
-                          if (index == widget.tags.length - 1) {
-                            return Text('${widget.tags[index]}');
+                          if (index == widget.tags.length - 1) { //determines whether tag is last
+                            return Text('${widget.tags[index]}'); //if last one, no comma
                           }
-                          return Text('${widget.tags[index]},     ');
+                          return Text('${widget.tags[index]},     '); //space and comma for not last
                         },
                       ),
                     ),
@@ -222,9 +222,9 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
 
   //https://stackoverflow.com/questions/54188895/how-to-implement-a-bottom-navigation-drawer-in-flutter
 
-  void bottomMenu() {
+  void bottomMenu() { //this is for the more context info
     //TODO: Add functionality - future builder?
-    showModalBottomSheet(
+    showModalBottomSheet( //this allows it to partially take screen over
         context: context,
         builder: (BuildContext context) {
           return SingleChildScrollView(
@@ -237,16 +237,16 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                 const SizedBox(
                   height: 15,
                 ),
-                Container(
-                  padding: EdgeInsets.all(16),
-                  child: Row(
+                Container(// note all items are like this - thus only this will be commented
+                  padding: const EdgeInsets.all(16),
+                  child: Row( //adds text and thumbs up  need to add functionality
                     //TODO: On pressed?
-                    children: [
+                    children: const [
                       Icon(Icons.thumb_up_outlined),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('Like'),
+                      Text('Like'),
                     ],
                   ),
                 ),
@@ -254,15 +254,15 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                   height: 15,
                 ),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     //TODO: On pressed?
-                    children: [
+                    children: const [
                       Icon(Icons.thumb_down_outlined),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('Dislike'),
+                      Text('Dislike'),
                     ],
                   ),
                 ),
@@ -270,15 +270,15 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                   height: 15,
                 ),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     //TODO: On pressed?
-                    children: [
+                    children: const [
                       Icon(Icons.bookmark_border),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('Add to Listen Later'),
+                      Text('Add to Listen Later'),
                     ],
                   ),
                 ),
@@ -286,15 +286,15 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                   height: 15,
                 ),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     //TODO: On pressed?
-                    children: [
+                    children: const[
                       Icon(Icons.add_to_photos_outlined),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('Add to Playlist'),
+                      Text('Add to Playlist'),
                     ],
                   ),
                 ),
@@ -302,15 +302,15 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                   height: 15,
                 ),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     //TODO: On pressed? - double check whats there
-                    children: [
+                    children: const [
                       Icon(Icons.share),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('Share'),
+                      Text('Share'),
                     ],
                   ),
                 ),
@@ -318,15 +318,15 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                   height: 15,
                 ),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     //TODO: On pressed?
-                    children: [
+                    children: const [
                       Icon(Icons.read_more_outlined),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('View Story Description'),
+                      Text('View Story Description'),
                     ],
                   ),
                 ),
@@ -334,15 +334,15 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                   height: 15,
                 ),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     //TODO: On pressed?
-                    children: [
+                    children: const [
                       Icon(Icons.account_circle_outlined),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('View Author Profile'),
+                      Text('View Author Profile'),
                     ],
                   ),
                 ),
@@ -350,15 +350,15 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                   height: 15,
                 ),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     //TODO: On pressed?
-                    children: [
+                    children: const [
                       Icon(Icons.transcribe_outlined),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('View Transcript'),
+                      Text('View Transcript'),
                     ],
                   ),
                 ),
@@ -366,15 +366,15 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
                   height: 15,
                 ),
                 Container(
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     //TODO: On pressed?
-                    children: [
+                    children: const [
                       Icon(Icons.report_outlined),
                       SizedBox(
                         width: 15,
                       ),
-                      const Text('Report'),
+                      Text('Report'),
                     ],
                   ),
                 ),
@@ -384,24 +384,25 @@ class _DescriptionStoryPageState extends State<DescriptionStoryPage> {
         });
   }
 
-  Future<AppUser> getAuthorItems() async {
+  Future<AppUser> getAuthorItems() async { //this gets and returns the author information for a story
     final DocumentSnapshot result = await FirebaseFirestore.instance
         .collection('Users')
-        .doc(widget.authorID)
+        .doc(widget.authorID) //get specific doc matching the story author information
         .get();
-    final DocumentSnapshot document = result;
-    final tempUser = AppUser(
+    final DocumentSnapshot document = result; //for some reason this is necessary to make it function correctly
+    final tempUser = AppUser( //generates appuser class - returns
         userID: document['userID'],
         firstName: document['firstName'],
         lastName: document['lastName'],
         imageURL: document['imageURL']);
 
-    return tempUser;
+    return tempUser; //returns appuser
   }
 }
 
-class PlayAudioStoryPage extends StatefulWidget {
-  final String art;
+class PlayAudioStoryPage extends StatefulWidget { //actual audio player
+  //Story variables
+  final String art; //for story image
   final String authorID;
   final String description;
   final String downloadURL;
@@ -411,6 +412,7 @@ class PlayAudioStoryPage extends StatefulWidget {
   final String storyName;
   final List<dynamic> tags;
 
+  //Author variables
   final String firstName;
   final String imageURL;
   final String lastName;
@@ -432,7 +434,6 @@ class PlayAudioStoryPage extends StatefulWidget {
     required this.lastName,
     required this.userID,
   }) : super(key: key);
-  //TODO: pass in all information via parameters
 
   @override
   State<PlayAudioStoryPage> createState() => _PlayAudioStoryPageState();
@@ -446,6 +447,8 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
 
   @override
   void initState() {
+    //same as test page - see 'play_audio.dart'
+    //https://www.youtube.com/watch?v=MB3YGQ-O1lk
     super.initState();
 
     setAudio();
@@ -502,7 +505,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
             ),
             Center(
                 child: Image.network(
-              widget.art,
+              widget.art, //For story image
               width: 250,
             )),
             const SizedBox(
@@ -512,7 +515,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
             const SizedBox(
               height: 15,
             ),
-            Row(
+            Row( //author information
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Image.network(
@@ -525,7 +528,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
             const SizedBox(
               height: 25,
             ),
-            Slider(
+            Slider( //audio time slider
               min: 0,
               max: duration.inSeconds.toDouble(),
               value: position.inSeconds.toDouble(),
@@ -534,7 +537,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
                 await audioPlayer.seek(position);
               },
             ),
-            Padding(
+            Padding(//times
               padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -544,7 +547,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
                 ],
               ),
             ),
-            CircleAvatar(
+            CircleAvatar( //play/pause
               radius: 35,
               child: IconButton(
                 icon: Icon(
@@ -552,7 +555,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
                 ),
                 iconSize: 50,
                 onPressed: () async {
-                  if (isPlaying) {
+                  if (isPlaying) { //pauses or plays
                     await audioPlayer.pause();
                   } else {
                     await audioPlayer.resume();
@@ -566,7 +569,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
     );
   }
 
-  String formatTime(Duration duration) {
+  String formatTime(Duration duration) { //utility for displaying formatted time (https://www.youtube.com/watch?v=MB3YGQ-O1lk)
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = twoDigits(duration.inHours);
     final minutes = twoDigits(duration.inMinutes.remainder(60));
@@ -579,7 +582,7 @@ class _PlayAudioStoryPageState extends State<PlayAudioStoryPage> {
     ].join(':');
   }
 
-  Future setAudio() async {
+  Future setAudio() async { //sets audio so that it does not load each time play is pressed/ audio plays
     audioPlayer.setReleaseMode(ReleaseMode.release);
 
     audioPlayer.setSourceUrl(widget.downloadURL);

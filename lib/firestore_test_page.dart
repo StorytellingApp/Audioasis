@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 //References
 //https://www.youtube.com/watch?v=ErP_xomHKTw
 
+//Depricated - no longer in use
+//Was used to test Firestore
+
 class FirePageTest extends StatefulWidget {
   const FirePageTest({Key? key}) : super(key: key);
 

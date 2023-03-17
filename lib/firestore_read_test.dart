@@ -4,6 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'utils.dart';
 
+//Depricated - no longer in use
+//Was used to test reading from Firestore
+
 //References
 //https://www.youtube.com/watch?v=ErP_xomHKTw
 

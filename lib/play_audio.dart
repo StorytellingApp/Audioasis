@@ -6,6 +6,8 @@ import 'package:audioplayers/audioplayers.dart';
 //References:
 //https://www.youtube.com/watch?v=MB3YGQ-O1lk
 
+//This page is no longer used - was to test playing audio from Firebase
+
 class PlayAudioWidget extends StatefulWidget {
   const PlayAudioWidget({Key? key}) : super(key: key);
 
@@ -73,9 +75,11 @@ class _PlayAudioWidgetState extends State<PlayAudioWidget> {
     super.dispose();
   }
 
+  //initializes audio player
   Future setAudio() async {
     audioPlayer.setReleaseMode(ReleaseMode.release);
 
+    //This audio no longer exists
     String storyURL = await storageRef.child("Audio/Test2.mp3").getDownloadURL();
     audioPlayer.setSource(UrlSource(storyURL));
   }
@@ -94,6 +98,7 @@ class _PlayAudioWidgetState extends State<PlayAudioWidget> {
             'Test Audio',
             style: TextStyle(fontSize: 14),
           ),
+          //position indicator
           Slider(
             min: 0,
             max: duration.inSeconds.toDouble(),
@@ -134,6 +139,7 @@ class _PlayAudioWidgetState extends State<PlayAudioWidget> {
     );
   }
 
+  //utility for displaying time
   String formatTime(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2,'0');
     final hours = twoDigits(duration.inHours);

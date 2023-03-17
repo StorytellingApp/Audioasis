@@ -1,16 +1,8 @@
 //Use for the home pages and all associated things
 
-import 'package:destudio_test/searchCards.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'auth_page.dart';
-import 'utils.dart';
-import 'verify_email_page.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:io';
 
+//This is home page - everything is temporary
 
 class HomeTabPage extends StatefulWidget {
   const HomeTabPage({Key? key}) : super(key: key);
@@ -19,6 +11,7 @@ class HomeTabPage extends StatefulWidget {
   State<HomeTabPage> createState() => _HomeTabPageState();
 }
 
+//cards to display
 class SearchCards {
   final String url;
   final String author;
@@ -34,6 +27,7 @@ class SearchCards {
 
 class _HomeTabPageState extends State<HomeTabPage> {
 
+  //Temporary list - proof of concept
   List<SearchCards> items = [
     const SearchCards(
       url: 'https://cdn.britannica.com/83/156583-050-4A1FABB5/Red-raspberries.jpg',
@@ -66,7 +60,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            Row( //Top Bar - change images
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
@@ -85,6 +79,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                 ),
                 const CircleAvatar( //profile
                   radius: 20.0,
+                  //TODO: change image - this is temporary
                   backgroundImage: AssetImage('images/UserProfilePic.jpg'),
                 ),
               ],
@@ -171,7 +166,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                 color: Colors.black,
               ),
             ),
-            SizedBox(
+            SizedBox(// temp cards
               height: 195.0,
               child: ListView.separated(
                 padding: const EdgeInsets.all(16),
@@ -189,7 +184,7 @@ class _HomeTabPageState extends State<HomeTabPage> {
                 color: Colors.black,
               ),
             ),
-            SizedBox(
+            SizedBox( //temp cards
               height: 195.0,
               child: ListView.separated(
                 padding: const EdgeInsets.all(16),
@@ -205,6 +200,8 @@ class _HomeTabPageState extends State<HomeTabPage> {
       ),
     );
   }
+
+  //creates the cards
   Widget buildCard({required SearchCards item}) => Container(
     width: 150,
     child: Column(

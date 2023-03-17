@@ -8,6 +8,7 @@ import 'forgot_password_page.dart';
 //References:
 //https://www.youtube.com/watch?v=4vKiJZNPhss
 
+//login page
 class LoginWidget extends StatefulWidget {
   final VoidCallback onCLickedSignUp;
   const LoginWidget({Key? key,
@@ -38,6 +39,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              //For logo
               const CircleAvatar(
                 radius: 100.0,
                 backgroundImage: AssetImage('images/Classy-Logo-AO.jpg'),
@@ -46,6 +48,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 height: 40.0,
               ),
               Container(
+                //email input
                 padding: const EdgeInsets.all(16),
                 child: TextField(
                   controller: userNameController,
@@ -57,6 +60,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                 ),
               ),
               Container(
+                //pasword input
                 padding: const EdgeInsets.all(16),
                 child: TextField(
                   controller: passwordController,
@@ -65,7 +69,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                       labelText: 'Password',
                     prefixIcon: Icon(Icons.lock),
                   ),
-                  obscureText: true,
+                  obscureText: true, //hides text
                 ),
               ),
               GestureDetector(
@@ -78,12 +82,13 @@ class _LoginWidgetState extends State<LoginWidget> {
                     fontSize: 16,
                   ),
                 ),
+                //navigates user to forgot password page
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => ForgotPasswordPage()
                 )),
               ),
               TextButton(
-                onPressed: signIn,
+                onPressed: signIn, //what is called when hit
                 child: const Text(
                   'Sign In',
                   style: TextStyle(
@@ -132,6 +137,9 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   Future signIn() async {
+    //logs user in
+
+    //displays circular progress indicator
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -139,12 +147,13 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
 
     try {
+      //Logs in user
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: userNameController.text.trim(),
         password: passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
-
+      //This WILL catch duplicate account emails or non-exisiting emails
       Utils.showSnackBar(e.message);
     }
 

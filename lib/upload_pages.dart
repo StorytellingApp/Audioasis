@@ -2,13 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:destudio_test/main.dart';
 import 'package:destudio_test/userClasses.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'auth_page.dart';
 import 'utils.dart';
-import 'verify_email_page.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 
@@ -16,12 +12,12 @@ import 'dart:io';
 //https://pub.dev/packages/file_picker
 //https://github.com/miguelpruivo/flutter_file_picker/wiki/API#filters
 
-enum UploadType { single, chapter }
+enum UploadType { single, chapter } //No longer used for single upload
 
-enum ChapterFirstOrNot { firstChapter, notFirstChapter }
+enum ChapterFirstOrNot { firstChapter, notFirstChapter } // Was for determining what position in series
 
-const List<String> uploadDropOptions = ['Single', 'Series'];
-const List<String> seriesDropOptions = ['Yes', 'No'];
+const List<String> uploadDropOptions = ['Single', 'Series']; //for old dropdown menu
+const List<String> seriesDropOptions = ['Yes', 'No']; //for old dropdown menu
 
 class UploadTabPage extends StatefulWidget {
   const UploadTabPage({Key? key}) : super(key: key);
@@ -31,28 +27,29 @@ class UploadTabPage extends StatefulWidget {
 }
 
 class _UploadTabPageState extends State<UploadTabPage> {
-  PlatformFile? pickedImage;
-  PlatformFile? pickedAudio;
+  PlatformFile? pickedImage; //the image that is selected
+  PlatformFile? pickedAudio; //the audio that is selected
 
-  PlatformFile? seriesPickedImage;
-  PlatformFile? seriesFirstPickedAudio;
-  PlatformFile? seriesLaterPickedAudio;
+  PlatformFile? seriesPickedImage; //no longer used
+  PlatformFile? seriesFirstPickedAudio; //no longer used
+  PlatformFile? seriesLaterPickedAudio; //no longer used
 
-  UploadTask? imageUploadTask;
-  UploadTask? audioUploadTask;
+  UploadTask? imageUploadTask; //for keeping track of upload tasks
+  UploadTask? audioUploadTask; //for keeping track of upload tasks
 
   //For the selected series
   //var selectedSeries = '';
 
   UploadType? _uploadType = UploadType.single;
   String _stringUpload = uploadDropOptions.first;
-  String _seriesType = seriesDropOptions.first;
+  String _seriesType = seriesDropOptions.first; //was for dropdown menu
 
   String _series = 'Test';
 
-  final singleFormKey = GlobalKey<FormState>();
+  final singleFormKey = GlobalKey<FormState>(); //for single chapter upload form verification
   final chapterFormKey = GlobalKey<FormState>();
 
+  //text controllers
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
   final tagController = TextEditingController();
@@ -65,6 +62,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
 
   @override
   void dispose() {
+    //for disposing text controllers
     titleController.dispose();
     descriptionController.dispose();
     tagController.dispose();
@@ -77,8 +75,8 @@ class _UploadTabPageState extends State<UploadTabPage> {
     super.dispose();
   }
 
-  Future uploadAllSingle() async {
-    //Check if image and audio are not null
+  Future uploadAllSingle() async { //this uploads the story, and is what is actually called
+    //Check if image and audio are not null and validates form - all fields are filled
     final isValid = singleFormKey.currentState!.validate();
     if (!isValid) return;
     if (pickedImage == null) {
@@ -93,6 +91,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
     //Entire Form is Filled Out
     //https://www.reddit.com/r/Firebase/comments/tzwtzu/should_image_names_be_unique_when_storing_in/
 
+    //shows circularprogressindicator while upload takes place
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -100,6 +99,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               child: CircularProgressIndicator(),
             ));
 
+    //generates unique story and image ids for files
     final storyID =
         '${FirebaseAuth.instance.currentUser!.uid.toString()}audio${DateTime.now().toString()}';
     final imageID =
@@ -108,21 +108,24 @@ class _UploadTabPageState extends State<UploadTabPage> {
     //Unique story ID
 
     //Put image and audio up - keep track of download URLS
+    //creates file objects for selected files
     final imagePath = 'StoryImages/$imageID';
     final imageFile = File(pickedImage!.path!);
     final audioPath = 'Audio/$storyID';
     final audioFile = File(pickedAudio!.path!);
 
+    //uploads audio to firebase
     final audioRef = FirebaseStorage.instance.ref().child(audioPath);
     audioUploadTask = audioRef.putFile(audioFile);
-    final audioSnapshot = await audioUploadTask!.whenComplete(() => {});
-    final audioURL = await audioSnapshot.ref.getDownloadURL();
+    final audioSnapshot = await audioUploadTask!.whenComplete(() => {}); //waits until upload task is complete
+    final audioURL = await audioSnapshot.ref.getDownloadURL(); //gets download url of audio
     print(audioURL);
 
+    //uploads image to firebase
     final imageRef = FirebaseStorage.instance.ref().child(imagePath);
     imageUploadTask = imageRef.putFile(imageFile);
-    final imageSnapshot = await imageUploadTask!.whenComplete(() => {});
-    final imageURL = await imageSnapshot.ref.getDownloadURL();
+    final imageSnapshot = await imageUploadTask!.whenComplete(() => {}); //waits until upload task is complete
+    final imageURL = await imageSnapshot.ref.getDownloadURL(); //gets download url of image
     print(imageURL);
 
     //Parse tags
@@ -139,6 +142,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
     //print(tagList);
 
     //Prep for putting to firebase
+    //creates story information object
     final uploadStoryFirebase = Story(
       storyID: storyID,
       storyName: titleController.text.trim(),
@@ -150,12 +154,14 @@ class _UploadTabPageState extends State<UploadTabPage> {
       series: false,
       seriesID: '',
     );
+    //uploads story object to firestore
     final storyJsonUpload =
         FirebaseFirestore.instance.collection('Stories').doc(storyID);
     storyJsonUpload.set(uploadStoryFirebase.toJson());
 
+    //clears circular progress indicator
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
-    setState(() {
+    setState(() { //clears upload page - needs some adjusting
       pickedImage = null;
       pickedAudio = null;
       titleController.clear();
@@ -163,6 +169,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
       tagController.clear();
     });
 
+    //shows dialog saying story was succesfully uploaded
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -178,8 +185,8 @@ class _UploadTabPageState extends State<UploadTabPage> {
             ));
   }
 
-  Future uploadAllFirstSeries() async {
-    final isValid = chapterFormKey.currentState!.validate();
+  Future uploadAllFirstSeries() async { //This follows the same process as above - NO LONGER USED
+    final isValid = chapterFormKey.currentState!.validate(); //validates form, ensures images and audio files are selected
     if (!isValid) return;
     if (pickedImage == null) {
       Utils.showSnackBar('Please Select an Image');
@@ -190,7 +197,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
       return;
     }
 
-    //Enitre form is filled out
+    //Entire form is filled out
     final storyID =
         '${FirebaseAuth.instance.currentUser!.uid.toString()}audio${DateTime.now().toString()}';
     final imageID =
@@ -226,7 +233,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
         '${FirebaseAuth.instance.currentUser!.uid.toString()}series${DateTime.now().toString()}';
 
     //prep for putting to firebase - both playlist and story
-    List<String> stories = [storyID];
+    List<String> stories = [storyID]; //Creates series information
     final uploadSeries = Series(
       seriesID: seriesID,
       authorID: FirebaseAuth.instance.currentUser!.uid.toString(),
@@ -255,33 +262,33 @@ class _UploadTabPageState extends State<UploadTabPage> {
     seriesJsonUpload.set(uploadSeries.toJson());
   }
 
-  Future pickImage() async {
+  Future pickImage() async { //picks image
     final userImage = await FilePicker.platform.pickFiles(type: FileType.image);
     if (userImage == null) return;
 
-    setState(() {
+    setState(() { //sets variable to image
       pickedImage = userImage.files.first;
     });
   }
 
-  Future pickAudio() async {
+  Future pickAudio() async { //picks audio
     final userAudio = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['mp3', 'wav']);
     if (userAudio == null) return;
 
-    setState(() {
+    setState(() { //sets variable to image
       pickedAudio = userAudio.files.first;
     });
   }
 
-  Widget firstChapter() {
+  Widget firstChapter() { //No longer used - creates form for uploading
     return Form(
-      key: chapterFormKey,
+      key: chapterFormKey, //for form validation
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16), //series name field
             child: TextFormField(
               controller: seriesNameController,
               textInputAction: TextInputAction.done,
@@ -293,7 +300,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
           ),
           Container(
             padding: const EdgeInsets.all(16),
-            child: TextFormField(
+            child: TextFormField( //chapter name field
               controller: seriesTitleController,
               textInputAction: TextInputAction.done,
               decoration: const InputDecoration(labelText: 'Chapter Name'),
@@ -304,7 +311,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
           ),
           Container(
             padding: const EdgeInsets.all(16),
-            child: TextFormField(
+            child: TextFormField( //description field
               controller: seriesDescriptionController,
               textInputAction: TextInputAction.done,
               decoration: const InputDecoration(labelText: 'Story Description'),
@@ -313,7 +320,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
                   value != null && value.isEmpty ? 'Enter a Description' : null,
             ),
           ),
-          if (pickedAudio != null)
+          if (pickedAudio != null) //if audio IS chosen, display that the audio is selected
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
@@ -323,7 +330,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
                 ),
               ],
             ),
-          Row(
+          Row( //button for audio selection
             children: [
               const Spacer(
                 flex: 1,
@@ -341,7 +348,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               ),
             ],
           ),
-          Container(
+          Container( //field for tags
             padding: const EdgeInsets.all(16),
             child: TextFormField(
               controller: seriesTagController,
@@ -350,13 +357,13 @@ class _UploadTabPageState extends State<UploadTabPage> {
                   const InputDecoration(labelText: 'Tags (Comma Separated)'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter Tags' : null,
+                  value != null && value.isEmpty ? 'Enter Tags' : null, //validation
             ),
           ),
           const SizedBox(
             height: 15,
           ),
-          ElevatedButton(
+          ElevatedButton( //for uploading
             onPressed: uploadAllFirstSeries, //TODO: Do form validation
             child: const Text('Publish Story'),
           ),
@@ -365,7 +372,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
     );
   }
 
-  Widget laterChapter() {
+  Widget laterChapter() { //NOT USED - had trouble listing previously uploaded series
     String _dropDownSeries = '';
 //https://stackoverflow.com/questions/49764905/how-to-assign-future-to-widget-in-flutter
     //https://stackoverflow.com/questions/56249715/futurebuilder-doesnt-wait-for-future-to-complete
@@ -426,7 +433,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
     );
   }
 
-  Future<List<String>> getItems() async {
+  Future<List<String>> getItems() async { //this was used in order to get the information regarding the current user - not used
     final QuerySnapshot result = await FirebaseFirestore.instance
         .collection('Series')
         .where('authorID',
@@ -446,32 +453,32 @@ class _UploadTabPageState extends State<UploadTabPage> {
     //TODO: build list
   }
 
-  Widget singleStory() {
+  Widget singleStory() { //THIS IS USED - Main Upload page
     return Form(
-      key: singleFormKey,
+      key: singleFormKey, //for form validation
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.all(16),
-            child: TextFormField(
+            child: TextFormField( //title field
               controller: titleController,
               textInputAction: TextInputAction.done,
               decoration: const InputDecoration(labelText: 'Title'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter a Name' : null,
+                  value != null && value.isEmpty ? 'Enter a Name' : null, //validation
             ),
           ),
           Container(
             padding: const EdgeInsets.all(16),
-            child: TextFormField(
+            child: TextFormField( //description field
               controller: descriptionController,
               textInputAction: TextInputAction.done,
               decoration: const InputDecoration(labelText: 'Description'),
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (value) =>
-                  value != null && value.isEmpty ? 'Enter a Description' : null,
+                  value != null && value.isEmpty ? 'Enter a Description' : null, //validation
             ),
           ),
           const SizedBox(
@@ -481,7 +488,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
           const SizedBox(
             height: 15,
           ),
-          if (pickedAudio != null)
+          if (pickedAudio != null) //only display if audio is chosen
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
@@ -497,7 +504,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
                 flex: 1,
               ),
               ElevatedButton(
-                  onPressed: pickAudio,
+                  onPressed: pickAudio, //for picking audio
                   child: Row(
                     children: const [
                       Text('Upload Audio '),
@@ -509,7 +516,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
               ),
             ],
           ),
-          Container(
+          Container( //for tags
             padding: const EdgeInsets.all(16),
             child: TextFormField(
               controller: tagController,
@@ -525,7 +532,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
             height: 15,
           ),
           ElevatedButton(
-            onPressed: uploadAllSingle, //TODO: Do form validation
+            onPressed: uploadAllSingle, //calls the upload function
             child: const Text('Publish Story'),
           ),
         ],
@@ -533,7 +540,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
     );
   }
 
-  Widget chapterStory() {
+  Widget chapterStory() { //NOT USED
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -573,7 +580,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
     );
   }
 
-  @override
+  @override //THis is what is displayed initially
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
@@ -581,13 +588,12 @@ class _UploadTabPageState extends State<UploadTabPage> {
         child: Center(
           child: Column(
             children: [
-              //TODO: add form validation
               const SizedBox(
                 height: 10,
               ),
-              (pickedImage == null)
+              (pickedImage == null) //displays no image found if no image selected, else display image
                   ? Image.asset(
-                      'images/NoImageDefault.jpg', //TODO: DOes not load
+                      'images/NoImageDefault.jpg',
                       fit: BoxFit.fitWidth,
                       height: 250,
                     )
@@ -596,9 +602,9 @@ class _UploadTabPageState extends State<UploadTabPage> {
                       fit: BoxFit.fitWidth,
                       height: 250,
                     ),
-              ElevatedButton(
+              ElevatedButton( //picks images
                   onPressed: pickImage, //TODO: Fix image sizing and whatnot
-                  child: (pickedImage == null)
+                  child: (pickedImage == null) //varies text based on input
                       ? const Text('Pick an Image')
                       : const Text('Choose Another Image')),
               const SizedBox(
@@ -616,6 +622,7 @@ class _UploadTabPageState extends State<UploadTabPage> {
   }
 }
 
+//No longer used - can use for reference
 /*
 class UploadAudio extends StatefulWidget {
   const UploadAudio({Key? key}) : super(key: key);

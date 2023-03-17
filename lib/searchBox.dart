@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class SearchBox extends StatelessWidget {
   const SearchBox({Key? key}) : super(key: key);
 
+  //Not used
+
   @override
   Widget build(BuildContext context) {
     return Container(
